@@ -481,7 +481,7 @@ export function InspoPage() {
       )}
 
       {/* Lightbox */}
-      {{selected && (
+      {selected && (
   <div
     onClick={() => setSelected(null)}
     style={{ position: 'fixed', inset: 0, background: 'rgba(42,37,32,.85)', zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
