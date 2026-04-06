@@ -117,11 +117,11 @@ function DayModal({ day, completedDays, onComplete, onClose }) {
       <div style={{
         background: 'var(--card)',
         borderRadius: '16px 16px 0 0',
-        padding: 20,
+        padding: '20px 20px 80px',
         width: '100%',
         maxWidth: 480,
         margin: '0 auto',
-        maxHeight: '82vh',
+        maxHeight: '96vh',
         overflowY: 'auto',
         boxShadow: '0 -4px 20px rgba(42,37,32,.15)',
       }}>
