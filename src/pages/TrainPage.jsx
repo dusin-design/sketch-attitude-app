@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { useProgress } from '../hooks/useProgress'
 import { PHASES, QUOTES } from '../data/content'
-import { useAuth } from '../hooks/useAuth'
 import { useSketches } from '../hooks/useSketches'
 
 export default function TrainPage() {
@@ -115,7 +114,7 @@ function DayModal({ day, completedDays, onComplete, onClose }) {
       padding: '0 0 60px',
 }}
     >
-      <div style={{
+    <div style={{
        background: 'var(--card)',
       borderRadius: 16,
       padding: '20px 20px 32px',
@@ -126,7 +125,9 @@ function DayModal({ day, completedDays, onComplete, onClose }) {
       overflowY: 'scroll',
       WebkitOverflowScrolling: 'touch',
       boxShadow: '0 4px 32px rgba(42,37,32,.2)',
-      }}>
+      }}
+    >
+      
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
           <div>
             <h3 style={{ marginBottom: 2 }}>DAY {day}</h3>
