@@ -114,7 +114,7 @@ function DayModal({ day, completedDays, onComplete, onClose }) {
         alignItems: 'flex-end',
       }}
     >
-    style={{
+      <div style={{
   background: 'var(--card)',
   borderRadius: '16px 16px 0 0',
   padding: '20px 20px 100px',
@@ -125,7 +125,7 @@ function DayModal({ day, completedDays, onComplete, onClose }) {
   overflowY: 'scroll',
   WebkitOverflowScrolling: 'touch',
   boxShadow: '0 -4px 20px rgba(42,37,32,.15)',
-}}
+}}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
           <div>
             <h3 style={{ marginBottom: 2 }}>DAY {day}</h3>
