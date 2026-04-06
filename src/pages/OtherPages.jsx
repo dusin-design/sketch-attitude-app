@@ -481,24 +481,42 @@ export function InspoPage() {
       )}
 
       {/* Lightbox */}
-      {selected && (
-        <div
-          onClick={() => setSelected(null)}
-          style={{ position: 'fixed', inset: 0, background: 'rgba(42,37,32,.85)', zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
-        >
-          <div onClick={e => e.stopPropagation()}
-            style={{ maxWidth: 440, width: '100%', background: 'var(--card)', borderRadius: 14, overflow: 'hidden', position: 'relative', boxShadow: '0 8px 32px rgba(42,37,32,.3)' }}>
-            <img src={selected.url} alt={selected.name} style={{ width: '100%', maxHeight: '65vh', objectFit: 'contain', display: 'block', background: 'var(--bg3)' }} />
-            <button onClick={() => setSelected(null)}
-              style={{ position: 'absolute', top: 10, right: 10, background: 'rgba(42,37,32,.6)', border: 'none', color: '#fff', borderRadius: '50%', width: 32, height: 32, cursor: 'pointer', fontSize: 16 }}>
-              ✕
-            </button>
-            <div style={{ padding: 14 }}>
-              <span className="tag tag-orange">{selected.category.toUpperCase()}</span>
-            </div>
-          </div>
+      {{selected && (
+  <div
+    onClick={() => setSelected(null)}
+    style={{ position: 'fixed', inset: 0, background: 'rgba(42,37,32,.85)', zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
+  >
+    <div onClick={e => e.stopPropagation()}
+      style={{ maxWidth: 440, width: '100%', background: 'var(--card)', borderRadius: 14, overflow: 'hidden', position: 'relative', boxShadow: '0 8px 32px rgba(42,37,32,.3)' }}>
+      <img
+        src={selected.url}
+        alt={selected.name}
+        style={{ width: '100%', maxHeight: '45vh', objectFit: 'cover', display: 'block', background: 'var(--bg3)' }}
+      />
+      <button onClick={() => setSelected(null)}
+        style={{ position: 'absolute', top: 10, right: 10, background: 'rgba(42,37,32,.6)', border: 'none', color: '#fff', borderRadius: '50%', width: 32, height: 32, cursor: 'pointer', fontSize: 16 }}>
+        ✕
+      </button>
+      <div style={{ padding: 16 }}>
+        <h3 style={{ marginBottom: 4 }}>REFERENCE</h3>
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--text)', marginBottom: 10 }}>
+          {selected.info.label?.toUpperCase()}
         </div>
-      )}
+        {selected.info.desc && (
+          <p style={{ fontSize: 13, marginBottom: 12, lineHeight: 1.6 }}>{selected.info.desc}</p>
+        )}
+        {selected.info.tip && (
+          <div className="moto-card">
+            <div className="moto-text" style={{ fontSize: 12 }}>Try this: {selected.info.tip}</div>
+          </div>
+        )}
+        <span className="tag tag-orange" style={{ marginTop: 10, display: 'inline-block' }}>
+          {selected.category.toUpperCase()}
+        </span>
+      </div>
+    </div>
+  </div>
+)}
 
       <div style={{ background: 'var(--bg3)', border: '1.5px solid var(--border)', borderRadius: 8, padding: 12, marginTop: 4 }}>
         <p style={{ fontSize: 11, lineHeight: 1.6 }}>
