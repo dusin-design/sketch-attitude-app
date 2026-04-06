@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { useProgress } from '../hooks/useProgress'
 import { PHASES, QUOTES } from '../data/content'
+import { useAuth } from '../hooks/useAuth'
+import { useSketches } from '../hooks/useSketches'
 
 export default function TrainPage() {
   const { user } = useAuth()
@@ -97,6 +99,8 @@ function PhaseBlock({ phase, completedDays, currentDay, onDayClick }) {
 function DayModal({ day, completedDays, onComplete, onClose }) {
   const phase = PHASES.find(p => p.days.includes(day))
   const [ratings, setRatings] = useState({ Energy: 5, Attitude: 5, Anatomy: 5 })
+  const { user } = useAuth()
+  const { sketches, uploading, upload, remove } = useSketches(user?.id, day)
   const isDone = completedDays.has(day)
 
   return (
@@ -163,6 +167,37 @@ function DayModal({ day, completedDays, onComplete, onClose }) {
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--accent)', width: 20, textAlign: 'right' }}>{val}</span>
           </div>
         ))}
+
+        <h3 style={{ margin: '16px 0 8px' }}>YOUR SKETCHES</h3>
+
+{sketches.length > 0 && (
+  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
+    {sketches.map(s => (
+      <div key={s.name} style={{ position: 'relative', borderRadius: 8, overflow: 'hidden', border: '1.5px solid var(--border)' }}>
+        <img src={s.url} alt="sketch" style={{ width: '100%', height: 120, objectFit: 'cover', display: 'block' }} />
+        <button
+          onClick={() => remove(s.name)}
+          style={{ position: 'absolute', top: 4, right: 4, background: 'rgba(0,0,0,.5)', border: 'none', color: '#fff', borderRadius: '50%', width: 24, height: 24, cursor: 'pointer', fontSize: 12 }}
+        >✕</button>
+      </div>
+    ))}
+  </div>
+)}
+
+<label style={{
+  display: 'block', width: '100%', padding: '10px 0',
+  border: '1.5px dashed var(--border)', borderRadius: 8,
+  textAlign: 'center', cursor: uploading ? 'default' : 'pointer',
+  fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--muted)',
+  marginBottom: 12, letterSpacing: 1,
+}}>
+  {uploading ? 'UPLOADING...' : '+ UPLOAD SKETCH'}
+  <input
+    type="file" accept="image/*" style={{ display: 'none' }}
+    onChange={e => e.target.files[0] && upload(e.target.files[0])}
+    disabled={uploading}
+  />
+</label>
 
         <button
           className={`btn ${isDone ? 'btn-outline' : 'btn-primary'} btn-full`}
