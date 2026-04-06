@@ -115,17 +115,17 @@ function DayModal({ day, completedDays, onComplete, onClose }) {
       }}
     >
       <div style={{
-  background: 'var(--card)',
-  borderRadius: '16px 16px 0 0',
-  padding: '20px 20px 100px',
-  width: '100%',
-  maxWidth: 480,
-  margin: '0 auto',
-  height: '90vh',
-  overflowY: 'scroll',
-  WebkitOverflowScrolling: 'touch',
-  boxShadow: '0 -4px 20px rgba(42,37,32,.15)',
-}}>
+        background: 'var(--card)',
+        borderRadius: '16px 16px 0 0',
+        padding: '20px 20px 100px',
+        width: '100%',
+        maxWidth: 480,
+        margin: '0 auto',
+        maxHeight: '90vh',
+        overflowY: 'scroll',
+        WebkitOverflowScrolling: 'touch',
+        boxShadow: '0 -4px 20px rgba(42,37,32,.15)',
+      }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
           <div>
             <h3 style={{ marginBottom: 2 }}>DAY {day}</h3>
