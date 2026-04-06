@@ -1,6 +1,7 @@
 // ── TIMER PAGE ──────────────────────────────────────────────────────────────
 import { useState, useEffect, useRef } from 'react'
 import { POSE_PROMPTS } from '../data/content'
+import { useCharacters } from '../hooks/useCharacters'
 
 export function TimerPage() {
   const [preset, setPreset] = useState(30)
@@ -157,11 +158,24 @@ const RANDOM_CHARS = [
 ]
 
 export function StudioPage() {
+  const { user } = useAuth()
+  const { characters, save, remove } = useCharacters(user?.id)
   const [form, setForm] = useState({ name: '', arch: '', pose: '', clothes: '', expr: '', notes: '' })
   const [card, setCard] = useState(null)
+  const [saved, setSaved] = useState(false)
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
-  const build = () => setCard({ ...form })
+
+  const build = () => { setCard({ ...form }); setSaved(false) }
+
+  const saveCard = async () => {
+    const { error } = await save({
+      name: form.name, archetype: form.arch, pose: form.pose,
+      clothing: form.clothes, expression: form.expr, notes: form.notes
+    })
+    if (!error) setSaved(true)
+  }
+
   const random = () => {
     const c = RANDOM_CHARS[Math.floor(Math.random() * RANDOM_CHARS.length)]
     setForm({ name: c.name, arch: c.arch, pose: c.pose, clothes: c.clothes, expr: c.expr, notes: c.notes })
@@ -175,9 +189,7 @@ export function StudioPage() {
         <p style={{ marginBottom: 16 }}>Define a character. Build their identity. Draw them with attitude.</p>
       </div>
 
-      {[
-        { key: 'name', label: 'Character Name', placeholder: 'e.g. Ryn, Zero, Blaze...' },
-      ].map(f => (
+      {[{ key: 'name', label: 'Character Name', placeholder: 'e.g. Ryn, Zero, Blaze...' }].map(f => (
         <div className="field" key={f.key}>
           <label>{f.label}</label>
           <input type="text" value={form[f.key]} onChange={e => set(f.key, e.target.value)} placeholder={f.placeholder} />
@@ -200,7 +212,7 @@ export function StudioPage() {
 
       <div className="field">
         <label>Clothing Keywords</label>
-        <input type="text" value={form.clothes} onChange={e => set('clothes', e.target.value)} placeholder="e.g. oversized jacket, torn tights, platform boots..." />
+        <input type="text" value={form.clothes} onChange={e => set('clothes', e.target.value)} placeholder="e.g. oversized jacket, torn tights..." />
       </div>
       <div className="field">
         <label>Notes / Backstory Hook</label>
@@ -213,7 +225,7 @@ export function StudioPage() {
       </div>
 
       {card && (
-        <div style={{ background: 'var(--card)', border: '2px solid var(--accent)', borderRadius: 12, padding: 20, marginTop: 16, animation: 'fadeIn .3s ease', boxShadow: '0 3px 12px rgba(212,80,10,.15)' }}>
+        <div style={{ background: 'var(--card)', border: '2px solid var(--accent)', borderRadius: 12, padding: 20, marginTop: 16, boxShadow: '0 3px 12px rgba(212,80,10,.15)' }}>
           <span className="tag tag-orange" style={{ marginBottom: 8, display: 'inline-block' }}>CHARACTER CONCEPT</span>
           <h2 style={{ color: 'var(--accent)', marginBottom: 4 }}>{card.name || 'UNNAMED'}</h2>
           <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, marginBottom: 12 }}>{card.arch?.toUpperCase()}</p>
@@ -224,12 +236,30 @@ export function StudioPage() {
               <p style={{ fontSize: 13 }}>{v}</p>
             </div>
           ) : null)}
-          <div className="moto-card" style={{ marginTop: 14 }}>
-            <div className="moto-text" style={{ fontSize: 11 }}>
-              Draw a long-limbed {card.arch?.toLowerCase()} with {card.expr?.toLowerCase()} eyes, {card.pose?.toLowerCase()} stance, and {card.clothes?.toLowerCase()}.
-            </div>
-          </div>
+          <button
+            className={`btn ${saved ? 'btn-outline' : 'btn-primary'} btn-full`}
+            onClick={!saved ? saveCard : undefined}
+            style={{ marginTop: 12 }}
+          >
+            {saved ? '✓ SAVED TO YOUR COLLECTION' : 'SAVE CHARACTER'}
+          </button>
         </div>
+      )}
+
+      {/* Saved characters */}
+      {characters.length > 0 && (
+        <>
+          <div className="section-div" style={{ marginTop: 24 }}><h3 style={{ margin: 0 }}>YOUR CHARACTERS</h3></div>
+          {characters.map(c => (
+            <div key={c.id} style={{ background: 'var(--card)', border: '1.5px solid var(--border)', borderRadius: 10, padding: 14, marginBottom: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>{c.name || 'Unnamed'}</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--muted)', marginTop: 2 }}>{c.archetype}</div>
+              </div>
+              <button onClick={() => remove(c.id)} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: 16 }}>✕</button>
+            </div>
+          ))}
+        </>
       )}
     </div>
   )
