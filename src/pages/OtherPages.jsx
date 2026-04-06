@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { POSE_PROMPTS } from '../data/content'
 import { useCharacters } from '../hooks/useCharacters'
+import { useReferences } from '../hooks/useReferences'
 
 export function TimerPage() {
   const [preset, setPreset] = useState(30)
@@ -398,74 +399,112 @@ const INSPO_CARDS = [
 ]
 
 export function InspoPage() {
+  const { images, loading } = useReferences()
   const [filter, setFilter] = useState('all')
   const [selected, setSelected] = useState(null)
 
-  const filtered = filter === 'all' ? INSPO_CARDS : INSPO_CARDS.filter(c => c.tags.includes(filter))
+  const categories = ['all', 'character', 'clothing', 'expressions', 'face', 'gesture', 'ink', 'linework', 'pose', 'silhouette']
+
+  const filtered = filter === 'all'
+    ? images
+    : images.filter(img => img.category === filter)
 
   return (
     <div className="page">
       <div style={{ paddingTop: 20 }}>
         <h3>Visual References</h3>
         <h2 style={{ marginBottom: 8 }}>INSPIRATION</h2>
-        <p style={{ marginBottom: 14 }}>Study these concepts. Notice the attitude, the lines, the shapes. Then put the phone down and draw.</p>
+        <p style={{ marginBottom: 14 }}>
+          Study these references. Notice the attitude, the lines, the shapes. Then put the phone down and draw.
+        </p>
       </div>
 
+      {/* Filter tabs */}
       <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 8, marginBottom: 14, scrollbarWidth: 'none' }}>
-        {ALL_TAGS.map(t => (
-          <button key={t} onClick={() => setFilter(t)}
+        {categories.map(cat => (
+          <button key={cat} onClick={() => setFilter(cat)}
             style={{
               flexShrink: 0, padding: '6px 14px',
-              background: filter === t ? 'var(--accent)' : 'var(--card)',
-              border: `1.5px solid ${filter === t ? 'var(--accent)' : 'var(--border)'}`,
-              borderRadius: 20, fontFamily: 'var(--font-mono)', fontSize: 10,
-              color: filter === t ? '#fff' : 'var(--muted)',
-              cursor: 'pointer', transition: 'all .15s', letterSpacing: 1, textTransform: 'uppercase',
+              background: filter === cat ? 'var(--accent)' : 'var(--card)',
+              border: `1.5px solid ${filter === cat ? 'var(--accent)' : 'var(--border)'}`,
+              borderRadius: 20,
+              fontFamily: 'var(--font-mono)', fontSize: 10,
+              color: filter === cat ? '#fff' : 'var(--muted)',
+              cursor: 'pointer', transition: 'all .15s',
+              letterSpacing: 1, textTransform: 'uppercase',
             }}>
-            {t.toUpperCase()}
+            {cat === 'all' ? `ALL (${images.length})` : `${cat} (${images.filter(i => i.category === cat).length})`}
           </button>
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 16 }}>
-        {filtered.map((card, i) => (
-          <div key={i} onClick={() => setSelected(card)}
-            style={{
-              background: 'var(--card)', border: '1.5px solid var(--border)', borderRadius: 10,
-              padding: 14, cursor: 'pointer', transition: 'all .2s',
-              boxShadow: '0 1px 3px rgba(42,37,32,.06)',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.transform = 'none' }}
-          >
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, color: 'var(--text)', marginBottom: 6, textTransform: 'uppercase' }}>{card.title}</div>
-            <p style={{ fontSize: 11, lineHeight: 1.5 }}>{card.desc.substring(0, 60)}...</p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 8 }}>
-              {card.tags.slice(0, 2).map(t => <span key={t} className="tag tag-orange" style={{ fontSize: 9 }}>{t}</span>)}
+      {/* Grid */}
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: 40, fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--muted)', letterSpacing: 2 }}>
+          LOADING REFERENCES...
+        </div>
+      ) : filtered.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: 40, fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--muted)', letterSpacing: 2 }}>
+          NO IMAGES YET — UPLOAD TO SUPABASE STORAGE
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 16 }}>
+          {filtered.map((img, i) => (
+            <div key={img.name} onClick={() => setSelected(img)}
+              style={{
+                borderRadius: 10, overflow: 'hidden',
+                border: '1.5px solid var(--border)',
+                cursor: 'pointer', transition: 'all .2s',
+                boxShadow: '0 1px 3px rgba(42,37,32,.06)',
+                position: 'relative',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.transform = 'none' }}
+            >
+              <img
+                src={img.url}
+                alt={img.name}
+                style={{ width: '100%', height: 140, objectFit: 'cover', display: 'block', background: 'var(--bg3)' }}
+              />
+              <div style={{
+                position: 'absolute', bottom: 0, left: 0, right: 0,
+                background: 'linear-gradient(transparent, rgba(42,37,32,.7))',
+                padding: '20px 8px 7px',
+                fontFamily: 'var(--font-mono)', fontSize: 9,
+                color: '#f7f4ef', letterSpacing: 1, textTransform: 'uppercase',
+              }}>
+                {img.category}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
+      {/* Lightbox */}
       {selected && (
-        <div onClick={() => setSelected(null)}
-          style={{ position: 'fixed', inset: 0, background: 'rgba(42,37,32,.5)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+        <div
+          onClick={() => setSelected(null)}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(42,37,32,.85)', zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
+        >
           <div onClick={e => e.stopPropagation()}
-            style={{ background: 'var(--card)', borderRadius: 14, padding: 20, maxWidth: 380, width: '100%', boxShadow: '0 8px 32px rgba(42,37,32,.2)', position: 'relative' }}>
+            style={{ maxWidth: 440, width: '100%', background: 'var(--card)', borderRadius: 14, overflow: 'hidden', position: 'relative', boxShadow: '0 8px 32px rgba(42,37,32,.3)' }}>
+            <img src={selected.url} alt={selected.name} style={{ width: '100%', maxHeight: '65vh', objectFit: 'contain', display: 'block', background: 'var(--bg3)' }} />
             <button onClick={() => setSelected(null)}
-              style={{ position: 'absolute', top: 10, right: 10, background: 'var(--bg2)', border: '1.5px solid var(--border)', borderRadius: '50%', width: 30, height: 30, cursor: 'pointer', color: 'var(--muted)', fontSize: 14 }}>✕</button>
-            <h3 style={{ marginBottom: 4 }}>REFERENCE</h3>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 16, fontWeight: 700, color: 'var(--text)', marginBottom: 12, textTransform: 'uppercase' }}>{selected.title}</div>
-            <p style={{ marginBottom: 12 }}>{selected.desc}</p>
-            <div className="moto-card">
-              <div className="moto-text">Try this: {selected.tip}</div>
-            </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 12 }}>
-              {selected.tags.map(t => <span key={t} className="tag tag-blue">{t}</span>)}
+              style={{ position: 'absolute', top: 10, right: 10, background: 'rgba(42,37,32,.6)', border: 'none', color: '#fff', borderRadius: '50%', width: 32, height: 32, cursor: 'pointer', fontSize: 16 }}>
+              ✕
+            </button>
+            <div style={{ padding: 14 }}>
+              <span className="tag tag-orange">{selected.category.toUpperCase()}</span>
             </div>
           </div>
         </div>
       )}
+
+      <div style={{ background: 'var(--bg3)', border: '1.5px solid var(--border)', borderRadius: 8, padding: 12, marginTop: 4 }}>
+        <p style={{ fontSize: 11, lineHeight: 1.6 }}>
+          Images are for educational reference only. All rights belong to their respective creators.
+        </p>
+      </div>
     </div>
   )
 }
