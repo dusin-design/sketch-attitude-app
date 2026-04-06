@@ -50,12 +50,25 @@ export function useProgress(userId) {
     if (error) console.error('Error saving progress:', error)
   }, [userId, completedDays, completedPrinciples, streak, totalMinutes])
 
-  const markDayComplete = useCallback(async (day) => {
-    const next = new Set(completedDays)
-    next.add(day)
-    setCompletedDays(next)
-    await saveProgress({ completedDays: next })
-  }, [completedDays, saveProgress])
+  // Auto streak
+ const markDayComplete = useCallback(async (day) => {
+  const next = new Set(completedDays)
+  next.add(day)
+  setCompletedDays(next)
+
+  // Lagre dagen
+  await saveProgress({ completedDays: next })
+
+  // Beregn ny streak via Supabase-funksjonen
+  const { data, error } = await supabase.rpc('calculate_streak', {
+    p_user_id: userId,
+    p_completed_days: Array.from(next),
+  })
+
+  if (!error && data !== null) {
+    setStreak(data)
+  }
+}, [userId, completedDays, saveProgress])
 
   const markPrincipleComplete = useCallback(async (principleId) => {
     const next = new Set(completedPrinciples)
