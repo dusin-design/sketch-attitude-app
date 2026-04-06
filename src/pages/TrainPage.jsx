@@ -107,24 +107,25 @@ function DayModal({ day, completedDays, onComplete, onClose }) {
     <div
       onClick={e => e.target === e.currentTarget && onClose()}
       style={{
-        position: 'fixed', inset: 0,
-        background: 'rgba(42,37,32,.5)',
-        zIndex: 200,
-        display: 'flex',
-        alignItems: 'flex-end',
-      }}
+      position: 'fixed', inset: 0,
+      background: 'rgba(42,37,32,.5)',
+      zIndex: 200,
+      display: 'flex',
+      alignItems: 'center',
+      padding: '0 0 60px',
+}}
     >
       <div style={{
-        background: 'var(--card)',
-        borderRadius: '16px 16px 0 0',
-        padding: '20px 20px 100px',
-        width: '100%',
-        maxWidth: 480,
-        margin: '0 auto',
-        maxHeight: '90vh',
-        overflowY: 'scroll',
-        WebkitOverflowScrolling: 'touch',
-        boxShadow: '0 -4px 20px rgba(42,37,32,.15)',
+       background: 'var(--card)',
+      borderRadius: 16,
+      padding: '20px 20px 32px',
+      width: '100%',
+      maxWidth: 480,
+      margin: '0 auto',
+      maxHeight: '85vh',
+      overflowY: 'scroll',
+      WebkitOverflowScrolling: 'touch',
+      boxShadow: '0 4px 32px rgba(42,37,32,.2)',
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
           <div>
