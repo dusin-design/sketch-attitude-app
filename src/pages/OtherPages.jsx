@@ -157,6 +157,53 @@ const RANDOM_CHARS = [
   { name: 'MOTH', arch: 'Punk Witch', pose: 'Looking over shoulder', clothes: 'Long tattered coat, rings on every finger, heavy boots', expr: 'Bitter smirk', notes: "Everyone thinks she's from somewhere else. She lets them think that." },
 ]
 
+function CharacterListCard({ character: c, onRemove }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div
+      style={{ background: 'var(--card)', border: '1.5px solid var(--border)', borderRadius: 10, padding: 14, marginBottom: 8, cursor: 'pointer', transition: 'border-color .2s' }}
+      onClick={() => setOpen(o => !o)}
+      onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent)'}
+      onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
+    >
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>{c.name || 'Unnamed'}</div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--muted)', marginTop: 2 }}>{c.archetype}</div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--muted)' }}>{open ? '▲' : '▼'}</span>
+          <button
+            onClick={e => { e.stopPropagation(); onRemove(c.id) }}
+            style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: 16, lineHeight: 1 }}
+          >✕</button>
+        </div>
+      </div>
+
+      {open && (
+        <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px dashed var(--border)' }}>
+          {[
+            ['Pose', c.pose],
+            ['Clothing', c.clothing],
+            ['Expression', c.expression],
+            ['Backstory', c.notes],
+          ].map(([label, value]) => value ? (
+            <div key={label} style={{ marginBottom: 8 }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--accent)', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 2 }}>{label}</div>
+              <p style={{ fontSize: 13 }}>{value}</p>
+            </div>
+          ) : null)}
+          <div className="moto-card" style={{ marginTop: 12 }}>
+            <div className="moto-text" style={{ fontSize: 11 }}>
+              Draw a long-limbed {c.archetype?.toLowerCase()} with {c.expression?.toLowerCase()} eyes and {c.pose?.toLowerCase()} stance.
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 export function StudioPage() {
   const { user } = useAuth()
   const { characters, save, remove } = useCharacters(user?.id)
@@ -251,14 +298,8 @@ export function StudioPage() {
         <>
           <div className="section-div" style={{ marginTop: 24 }}><h3 style={{ margin: 0 }}>YOUR CHARACTERS</h3></div>
           {characters.map(c => (
-            <div key={c.id} style={{ background: 'var(--card)', border: '1.5px solid var(--border)', borderRadius: 10, padding: 14, marginBottom: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>{c.name || 'Unnamed'}</div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--muted)', marginTop: 2 }}>{c.archetype}</div>
-              </div>
-              <button onClick={() => remove(c.id)} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: 16 }}>✕</button>
-            </div>
-          ))}
+  <CharacterListCard key={c.id} character={c} onRemove={remove} />
+))}
         </>
       )}
     </div>
