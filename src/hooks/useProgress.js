@@ -37,16 +37,16 @@ export function useProgress(userId) {
   // Save progress back to Supabase (upsert = insert or update)
   const saveProgress = useCallback(async (updates) => {
     if (!userId) return
-    const { error } = await supabase
-      .from('user_progress')
-      .upsert({
-        user_id: userId,
-        completed_days: Array.from(updates.completedDays ?? completedDays),
-        completed_principles: Array.from(updates.completedPrinciples ?? completedPrinciples),
-        streak: updates.streak ?? streak,
-        total_minutes: updates.totalMinutes ?? totalMinutes,
-        updated_at: new Date().toISOString(),
-      })
+   const { error } = await supabase
+  .from('user_progress')
+  .upsert({
+    user_id: userId,
+    completed_days: Array.from(updates.completedDays ?? completedDays),
+    completed_principles: Array.from(updates.completedPrinciples ?? completedPrinciples),
+    streak: updates.streak ?? streak,
+    total_minutes: updates.totalMinutes ?? totalMinutes,
+    updated_at: new Date().toISOString(),
+  }, { onConflict: 'user_id' })
     if (error) console.error('Error saving progress:', error)
   }, [userId, completedDays, completedPrinciples, streak, totalMinutes])
 
