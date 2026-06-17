@@ -16,6 +16,25 @@
   --font-body: 'Nunito', sans-serif;
 }
 
+[data-theme="dark"] {
+  --bg: #18140f;
+  --bg2: #221c15;
+  --bg3: #2c241a;
+  --card: #211b14;
+  --border: #3c3225;
+  --text: #f3ede2;
+  --muted: #ab9f8c;
+  --accent: #ff8c3d;
+  --accent2: #ef6b58;
+  --accent3: #6ba6e8;
+  --accent4: #e8b94a;
+  --accent-light: #3d2a18;
+}
+
+[data-theme="dark"] body {
+  background: var(--bg);
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
@@ -34,8 +53,8 @@ body::before {
   z-index: 0;
   opacity: .025;
   background-image:
-    repeating-linear-gradient(0deg, transparent, transparent 28px, #8a8178 28px, #8a8178 29px),
-    repeating-linear-gradient(90deg, transparent, transparent 28px, #8a8178 28px, #8a8178 29px);
+    repeating-linear-gradient(0deg, transparent, transparent 28px, var(--border) 28px, var(--border) 29px),
+    repeating-linear-gradient(90deg, transparent, transparent 28px, var(--border) 28px, var(--border) 29px);
 }
 
 ::-webkit-scrollbar { width: 4px; height: 4px; }

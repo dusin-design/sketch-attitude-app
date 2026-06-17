@@ -27,7 +27,20 @@ export default function HomePage() {
           </div>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 10, marginTop: 6 }}>
-          <LanguageToggle />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <LanguageToggle />
+            <button
+              onClick={() => navigate('/settings')}
+              aria-label="Settings"
+              style={{
+                width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: 'var(--bg2)', border: '1.5px solid var(--border)', borderRadius: '50%',
+                cursor: 'pointer', color: 'var(--muted)', flexShrink: 0,
+              }}
+            >
+              <GearIcon />
+            </button>
+          </div>
           <button
             onClick={signOut}
             style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--muted)' }}
@@ -99,5 +112,14 @@ function StatCard({ value, label }) {
       <div style={{ fontFamily: 'var(--font-display)', fontSize: 40, color: 'var(--accent)', lineHeight: 1 }}>{value}</div>
       <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--muted)', letterSpacing: '1.5px', textTransform: 'uppercase', marginTop: 2 }}>{label}</div>
     </div>
+  )
+}
+
+function GearIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="10" cy="10" r="2.5" />
+      <path d="M10 2.5v2M10 15.5v2M3.6 5.6l1.4 1.4M15 13l1.4 1.4M2.5 10h2M15.5 10h2M3.6 14.4l1.4-1.4M15 7l1.4-1.4" />
+    </svg>
   )
 }

@@ -159,6 +159,21 @@ export const STRINGS = {
     inspo_reference: 'REFERENCE',
     inspo_try_this: 'Try this:',
     inspo_legal: 'Images are for educational reference only. All rights belong to their respective creators.',
+
+    // Settings page
+    settings_title: 'SETTINGS',
+    settings_back: '← BACK',
+    settings_appearance: 'Appearance',
+    settings_theme: 'Theme',
+    settings_theme_light: 'LIGHT',
+    settings_theme_dark: 'DARK',
+    settings_text_size: 'Text Size',
+    settings_text_size_hint: 'Adjust the size of all text and icons in the app.',
+    settings_size_small: 'SMALL',
+    settings_size_normal: 'NORMAL',
+    settings_size_large: 'LARGE',
+    settings_size_xlarge: 'X-LARGE',
+    settings_language: 'Language',
   },
 
   no: {
@@ -318,6 +333,21 @@ export const STRINGS = {
     inspo_reference: 'REFERANSE',
     inspo_try_this: 'Prøv dette:',
     inspo_legal: 'Bildene er kun til pedagogisk referanse. Alle rettigheter tilhører de respektive skaperne.',
+
+    // Settings page
+    settings_title: 'INNSTILLINGER',
+    settings_back: '← TILBAKE',
+    settings_appearance: 'Utseende',
+    settings_theme: 'Tema',
+    settings_theme_light: 'LYS',
+    settings_theme_dark: 'MØRK',
+    settings_text_size: 'Tekststørrelse',
+    settings_text_size_hint: 'Juster størrelsen på all tekst og ikoner i appen.',
+    settings_size_small: 'LITEN',
+    settings_size_normal: 'NORMAL',
+    settings_size_large: 'STOR',
+    settings_size_xlarge: 'X-STOR',
+    settings_language: 'Språk',
   },
 }
 
