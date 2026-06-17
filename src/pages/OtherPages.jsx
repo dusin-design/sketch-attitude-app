@@ -158,6 +158,7 @@ export function FaceLabPage() {
 import { CHAR_ARCHETYPES, CHAR_POSES, CHAR_EXPRESSIONS } from '../data/content'
 import { useAuth } from '../hooks/useAuth'
 import { useCharacters } from '../hooks/useCharacters'
+import { useProgress } from '../hooks/useProgress'
 
 const RANDOM_CHARS = [
   { name: 'ZERO', arch: { en: 'Antihero', no: 'Antihelt' }, pose: { en: 'Slouched swagger', no: 'Sammensunket swagger' }, clothes: { en: 'Military surplus coat, torn shirt, unlaced boots', no: 'Militærovreskuddsfrakk, revet skjorte, uknyttede støvler' }, expr: { en: 'Tired contempt', no: 'Trøtt forakt' }, notes: { en: 'Former session musician who burned every bridge. Still plays better than anyone in the room.', no: 'Tidligere sessionmusiker som har brent alle broer. Spiller fortsatt bedre enn alle andre i rommet.' } },
