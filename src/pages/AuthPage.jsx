@@ -1,9 +1,13 @@
 import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
+import { useLanguage } from '../contexts/LanguageContext'
+import { t } from '../data/strings'
+import LanguageToggle from '../components/LanguageToggle'
 
 export default function AuthPage() {
   const { signIn, signUp, signInWithGoogle } = useAuth()
-  const [mode, setMode] = useState('login') // 'login' | 'signup'
+  const { language } = useLanguage()
+  const [mode, setMode] = useState('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -22,7 +26,7 @@ export default function AuthPage() {
     } else {
       const { error } = await signUp(email, password)
       if (error) setError(error.message)
-      else setMessage('Check your email to confirm your account.')
+      else setMessage(t('auth_check_email', language))
     }
     setLoading(false)
   }
@@ -38,55 +42,55 @@ export default function AuthPage() {
       position: 'relative',
       zIndex: 1,
     }}>
+      <div style={{ position: 'absolute', top: 16, right: 16 }}>
+        <LanguageToggle />
+      </div>
+
       <div style={{ width: '100%', maxWidth: 380 }}>
 
-        {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <div style={{ fontFamily: 'var(--font-display)', fontSize: 52, lineHeight: .9, color: 'var(--text)' }}>
             SKETCH<br /><span style={{ color: 'var(--accent)' }}>ATTITUDE</span>
           </div>
           <p style={{ marginTop: 8, fontSize: 13 }}>
-            Learn expressive character drawing, one day at a time.
+            {t('tagline', language)}
           </p>
         </div>
 
-        {/* Card */}
         <div className="card" style={{ padding: 24 }}>
           <h3 style={{ marginBottom: 20 }}>
-            {mode === 'login' ? 'WELCOME BACK' : 'CREATE ACCOUNT'}
+            {mode === 'login' ? t('auth_welcome_back', language) : t('auth_create_account', language)}
           </h3>
 
-          {/* Google */}
           <button
             className="btn btn-outline btn-full"
             onClick={signInWithGoogle}
             style={{ marginBottom: 16, gap: 8 }}
           >
             <GoogleIcon />
-            CONTINUE WITH GOOGLE
+            {t('auth_continue_google', language)}
           </button>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
             <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--muted)' }}>OR</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--muted)' }}>{t('auth_or', language)}</span>
             <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
           </div>
 
-          {/* Form */}
           <form onSubmit={handleSubmit}>
             <div className="field">
-              <label>Email</label>
+              <label>{t('auth_email', language)}</label>
               <input
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                placeholder="you@example.com"
+                placeholder={t('auth_email_placeholder', language)}
                 required
                 autoComplete="email"
               />
             </div>
             <div className="field">
-              <label>Password</label>
+              <label>{t('auth_password', language)}</label>
               <input
                 type="password"
                 value={password}
@@ -115,19 +119,18 @@ export default function AuthPage() {
               disabled={loading}
               style={{ marginTop: 4 }}
             >
-              {loading ? 'LOADING...' : mode === 'login' ? 'SIGN IN' : 'CREATE ACCOUNT'}
+              {loading ? t('auth_loading', language) : mode === 'login' ? t('auth_sign_in', language) : t('auth_create_account', language)}
             </button>
           </form>
         </div>
 
-        {/* Toggle */}
         <p style={{ textAlign: 'center', marginTop: 16, fontSize: 13 }}>
-          {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
+          {mode === 'login' ? t('auth_no_account', language) : t('auth_has_account', language)}
           <button
             onClick={() => { setMode(mode === 'login' ? 'signup' : 'login'); setError(''); setMessage('') }}
             style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 700 }}
           >
-            {mode === 'login' ? 'SIGN UP' : 'SIGN IN'}
+            {mode === 'login' ? t('auth_sign_up', language) : t('auth_sign_in_link', language)}
           </button>
         </p>
       </div>

@@ -1,36 +1,40 @@
 import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { useProgress } from '../hooks/useProgress'
-import { PHASES, QUOTES } from '../data/content'
 import { useSketches } from '../hooks/useSketches'
+import { useLanguage } from '../contexts/LanguageContext'
+import { t } from '../data/strings'
+import { PHASES, QUOTES, localize } from '../data/content'
 
 export default function TrainPage() {
   const { user } = useAuth()
-  const { completedDays, progressPct, completedDaysCount, currentDay, markDayComplete } = useProgress(user?.id)
+  const { language } = useLanguage()
+  const { completedDays, progressPct, currentDay, markDayComplete } = useProgress(user?.id)
   const [openDay, setOpenDay] = useState(null)
 
   return (
     <div className="page">
       <div style={{ paddingTop: 20 }}>
-        <h3>Your Journey</h3>
-        <h2 style={{ marginBottom: 8 }}>30-DAY PROGRAM</h2>
+        <h3>{t('train_journey', language)}</h3>
+        <h2 style={{ marginBottom: 8 }}>{t('train_title', language)}</h2>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-          <p>You're on day {currentDay}. Keep going.</p>
-          <span className="tag tag-orange">{progressPct}% DONE</span>
+          <p>{t('train_on_day', language)} {currentDay}{t('train_keep_going', language)}</p>
+          <span className="tag tag-orange">{progressPct}% {t('train_done_pct', language)}</span>
         </div>
         <div className="progress-bar">
           <div className="progress-fill" style={{ width: `${progressPct}%` }} />
         </div>
-        <div className="notice">Tap any day to open the exercise.</div>
+        <div className="notice">{t('train_tap_notice', language)}</div>
       </div>
 
-      {PHASES.map(phase => (
+      {PHASES.map((phase, i) => (
         <PhaseBlock
-          key={phase.label}
+          key={i}
           phase={phase}
           completedDays={completedDays}
           currentDay={currentDay}
           onDayClick={setOpenDay}
+          language={language}
         />
       ))}
 
@@ -46,18 +50,19 @@ export default function TrainPage() {
   )
 }
 
-function PhaseBlock({ phase, completedDays, currentDay, onDayClick }) {
+function PhaseBlock({ phase, completedDays, currentDay, onDayClick, language }) {
+  const catLabel = localize(phase.cat, language)
   return (
     <div style={{ marginBottom: 16 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
         <div>
-          <h3 style={{ marginBottom: 2 }}>{phase.cat.toUpperCase()} PHASE</h3>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--text)' }}>{phase.label}</div>
+          <h3 style={{ marginBottom: 2 }}>{catLabel.toUpperCase()} {t('train_phase_suffix', language)}</h3>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--text)' }}>{localize(phase.label, language)}</div>
         </div>
-        <span className="tag tag-yellow">{phase.mins} MIN</span>
+        <span className="tag tag-yellow">{phase.mins} {t('min_suffix', language)}</span>
       </div>
       <div className="card card-accent" style={{ padding: 12 }}>
-        <p style={{ marginBottom: 10 }}>{phase.desc}</p>
+        <p style={{ marginBottom: 10 }}>{localize(phase.desc, language)}</p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 6 }}>
           {phase.days.map(d => {
             const done = completedDays.has(d)
@@ -96,55 +101,58 @@ function PhaseBlock({ phase, completedDays, currentDay, onDayClick }) {
 }
 
 function DayModal({ day, completedDays, onComplete, onClose }) {
+  const { language } = useLanguage()
   const phase = PHASES.find(p => p.days.includes(day))
-  const [ratings, setRatings] = useState({ Energy: 5, Attitude: 5, Anatomy: 5 })
   const { user } = useAuth()
   const { sketches, uploading, upload, remove } = useSketches(user?.id, day)
+  const [ratings, setRatings] = useState({
+    [t('rating_energy', language)]: 5,
+    [t('rating_attitude', language)]: 5,
+    [t('rating_anatomy', language)]: 5,
+  })
   const isDone = completedDays.has(day)
 
   return (
     <div
       onClick={e => e.target === e.currentTarget && onClose()}
       style={{
-      position: 'fixed', inset: 0,
-      background: 'rgba(42,37,32,.5)',
-      zIndex: 200,
-      display: 'flex',
-      alignItems: 'center',
-      padding: '0 0 60px',
-}}
-    >
-    <div style={{
-       background: 'var(--card)',
-      borderRadius: 16,
-      padding: '20px 20px 32px',
-      width: '100%',
-      maxWidth: 480,
-      margin: '0 auto',
-      maxHeight: '85vh',
-      overflowY: 'scroll',
-      WebkitOverflowScrolling: 'touch',
-      boxShadow: '0 4px 32px rgba(42,37,32,.2)',
+        position: 'fixed', inset: 0,
+        background: 'rgba(42,37,32,.5)',
+        zIndex: 200,
+        display: 'flex',
+        alignItems: 'center',
+        padding: '0 0 60px',
       }}
     >
-      
+      <div style={{
+        background: 'var(--card)',
+        borderRadius: 16,
+        padding: '20px 20px 32px',
+        width: '100%',
+        maxWidth: 480,
+        margin: '0 auto',
+        maxHeight: '85vh',
+        overflowY: 'scroll',
+        WebkitOverflowScrolling: 'touch',
+        boxShadow: '0 4px 32px rgba(42,37,32,.2)',
+      }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
           <div>
-            <h3 style={{ marginBottom: 2 }}>DAY {day}</h3>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 18, fontWeight: 700 }}>{phase?.label}</div>
+            <h3 style={{ marginBottom: 2 }}>{t('train_day_label', language)} {day}</h3>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 18, fontWeight: 700 }}>{localize(phase?.label, language)}</div>
           </div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--muted)' }}>✕</button>
         </div>
 
         <div className="moto-card">
-          <div className="moto-text">"{QUOTES[day % QUOTES.length]}"</div>
+          <div className="moto-text">"{localize(QUOTES[day % QUOTES.length], language)}"</div>
         </div>
 
-        <h3 style={{ marginBottom: 8 }}>EXERCISE</h3>
+        <h3 style={{ marginBottom: 8 }}>{t('train_exercise', language)}</h3>
         {[
-          'Warm up with 5 fast loose gestures. No detail. Pure line.',
-          phase?.desc,
-          'Review your work. Pick your best result. Note what surprised you.',
+          t('train_step1', language),
+          localize(phase?.desc, language),
+          t('train_step3', language),
         ].map((step, i) => (
           <div key={i} style={{ display: 'flex', gap: 10, marginBottom: 12 }}>
             <div style={{
@@ -158,7 +166,7 @@ function DayModal({ day, completedDays, onComplete, onClose }) {
           </div>
         ))}
 
-        <h3 style={{ margin: '16px 0 8px' }}>SELF-RATING</h3>
+        <h3 style={{ margin: '16px 0 8px' }}>{t('train_self_rating', language)}</h3>
         {Object.entries(ratings).map(([label, val]) => (
           <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--muted)', width: 72, textTransform: 'uppercase', letterSpacing: 1 }}>{label}</span>
@@ -171,43 +179,43 @@ function DayModal({ day, completedDays, onComplete, onClose }) {
           </div>
         ))}
 
-        <h3 style={{ margin: '16px 0 8px' }}>YOUR SKETCHES</h3>
+        <h3 style={{ margin: '16px 0 8px' }}>{t('train_your_sketches', language)}</h3>
 
-{sketches.length > 0 && (
-  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
-    {sketches.map(s => (
-      <div key={s.name} style={{ position: 'relative', borderRadius: 8, overflow: 'hidden', border: '1.5px solid var(--border)' }}>
-        <img src={s.url} alt="sketch" style={{ width: '100%', height: 120, objectFit: 'cover', display: 'block' }} />
-        <button
-          onClick={() => remove(s.name)}
-          style={{ position: 'absolute', top: 4, right: 4, background: 'rgba(0,0,0,.5)', border: 'none', color: '#fff', borderRadius: '50%', width: 24, height: 24, cursor: 'pointer', fontSize: 12 }}
-        >✕</button>
-      </div>
-    ))}
-  </div>
-)}
+        {sketches.length > 0 && (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
+            {sketches.map(s => (
+              <div key={s.name} style={{ position: 'relative', borderRadius: 8, overflow: 'hidden', border: '1.5px solid var(--border)' }}>
+                <img src={s.url} alt="sketch" style={{ width: '100%', height: 120, objectFit: 'cover', display: 'block' }} />
+                <button
+                  onClick={() => remove(s.name)}
+                  style={{ position: 'absolute', top: 4, right: 4, background: 'rgba(0,0,0,.5)', border: 'none', color: '#fff', borderRadius: '50%', width: 24, height: 24, cursor: 'pointer', fontSize: 12 }}
+                >✕</button>
+              </div>
+            ))}
+          </div>
+        )}
 
-<label style={{
-  display: 'block', width: '100%', padding: '10px 0',
-  border: '1.5px dashed var(--border)', borderRadius: 8,
-  textAlign: 'center', cursor: uploading ? 'default' : 'pointer',
-  fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--muted)',
-  marginBottom: 12, letterSpacing: 1,
-}}>
-  {uploading ? 'UPLOADING...' : '+ UPLOAD SKETCH'}
-  <input
-    type="file" accept="image/*" style={{ display: 'none' }}
-    onChange={e => e.target.files[0] && upload(e.target.files[0])}
-    disabled={uploading}
-  />
-</label>
+        <label style={{
+          display: 'block', width: '100%', padding: '10px 0',
+          border: '1.5px dashed var(--border)', borderRadius: 8,
+          textAlign: 'center', cursor: uploading ? 'default' : 'pointer',
+          fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--muted)',
+          marginBottom: 12, letterSpacing: 1,
+        }}>
+          {uploading ? t('train_uploading', language) : t('train_upload', language)}
+          <input
+            type="file" accept="image/*" style={{ display: 'none' }}
+            onChange={e => e.target.files[0] && upload(e.target.files[0])}
+            disabled={uploading}
+          />
+        </label>
 
         <button
           className={`btn ${isDone ? 'btn-outline' : 'btn-primary'} btn-full`}
           onClick={!isDone ? onComplete : undefined}
-          style={{ marginTop: 16 }}
+          style={{ marginTop: 4 }}
         >
-          {isDone ? '✓ COMPLETED' : 'MARK COMPLETE'}
+          {isDone ? t('train_completed', language) : t('train_mark_complete', language)}
         </button>
       </div>
     </div>

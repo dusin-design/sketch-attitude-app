@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './hooks/useAuth'
+import { LanguageProvider } from './contexts/LanguageContext'
 import BottomNav from './components/BottomNav'
 import AuthPage from './pages/AuthPage'
 import HomePage from './pages/HomePage'
@@ -27,10 +28,8 @@ function AppRoutes() {
     )
   }
 
-  // Not logged in — show auth page for all routes
   if (!user) return <AuthPage />
 
-  // Logged in — full app with nav
   return (
     <>
       <Routes>
@@ -51,8 +50,10 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AppRoutes />
-    </BrowserRouter>
+    <LanguageProvider>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </LanguageProvider>
   )
 }

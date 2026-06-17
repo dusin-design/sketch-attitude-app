@@ -1,10 +1,11 @@
 // ── TIMER PAGE ──────────────────────────────────────────────────────────────
 import { useState, useEffect, useRef } from 'react'
-import { POSE_PROMPTS } from '../data/content'
-import { useCharacters } from '../hooks/useCharacters'
-import { useReferences } from '../hooks/useReferences'
+import { useLanguage } from '../contexts/LanguageContext'
+import { t } from '../data/strings'
+import { POSE_PROMPTS, localize } from '../data/content'
 
 export function TimerPage() {
+  const { language } = useLanguage()
   const [preset, setPreset] = useState(30)
   const [remaining, setRemaining] = useState(30)
   const [running, setRunning] = useState(false)
@@ -48,12 +49,11 @@ export function TimerPage() {
   return (
     <div className="page">
       <div style={{ paddingTop: 20, textAlign: 'center' }}>
-        <h3>Gesture Timer</h3>
-        <h2 style={{ marginBottom: 4 }}>TIMED DRILL MODE</h2>
-        <p style={{ marginBottom: 20 }}>Fast drawing preserves energy. Set a time, draw fast, repeat.</p>
+        <h3>{t('timer_label', language)}</h3>
+        <h2 style={{ marginBottom: 4 }}>{t('timer_title', language)}</h2>
+        <p style={{ marginBottom: 20 }}>{t('timer_intro', language)}</p>
       </div>
 
-      {/* Presets */}
       <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginBottom: 20, flexWrap: 'wrap' }}>
         {[30, 60, 120, 300].map(s => (
           <button key={s} onClick={() => selectPreset(s)}
@@ -66,13 +66,13 @@ export function TimerPage() {
               color: preset === s ? '#fff' : 'var(--muted)',
               cursor: 'pointer', transition: 'all .15s',
             }}>
-            {s < 60 ? `${s} SEC` : `${s / 60} MIN`}
+            {s < 60 ? `${s} ${t('sec', language)}` : `${s / 60} ${t('min', language)}`}
           </button>
         ))}
       </div>
 
       <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--muted)', textAlign: 'center', letterSpacing: 2, marginBottom: 8 }}>
-        ROUND {round} OF {totalRounds}
+        {t('timer_round', language)} {round} {t('timer_of', language)} {totalRounds}
       </div>
 
       <div style={{
@@ -89,20 +89,20 @@ export function TimerPage() {
 
       <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginBottom: 20 }}>
         <button className="btn btn-primary" onClick={() => setRunning(r => !r)}>
-          {running ? 'PAUSE' : remaining === 0 ? 'DONE ✓' : 'START'}
+          {running ? t('timer_pause', language) : remaining === 0 ? t('timer_done', language) : t('timer_start', language)}
         </button>
-        <button className="btn btn-outline" onClick={reset}>RESET</button>
-        <button className="btn btn-outline" onClick={skip}>SKIP ▶</button>
+        <button className="btn btn-outline" onClick={reset}>{t('timer_reset', language)}</button>
+        <button className="btn btn-outline" onClick={skip}>{t('timer_skip', language)}</button>
       </div>
 
       <div className="card">
-        <h3 style={{ marginBottom: 8 }}>POSE PROMPT</h3>
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--text)', lineHeight: 1.7 }}>{prompt}</p>
-        <button className="btn btn-outline btn-full" onClick={newPrompt} style={{ marginTop: 10 }}>NEW PROMPT</button>
+        <h3 style={{ marginBottom: 8 }}>{t('timer_pose_prompt', language)}</h3>
+        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--text)', lineHeight: 1.7 }}>{localize(prompt, language)}</p>
+        <button className="btn btn-outline btn-full" onClick={newPrompt} style={{ marginTop: 10 }}>{t('timer_new_prompt', language)}</button>
       </div>
 
       <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginTop: 8 }}>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--muted)' }}>ROUNDS:</span>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--muted)' }}>{t('timer_rounds', language)}</span>
         <input type="range" min="1" max="30" value={totalRounds}
           onChange={e => setTotalRounds(+e.target.value)} style={{ flex: 1 }} />
         <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--accent)', width: 20, textAlign: 'right' }}>{totalRounds}</span>
@@ -115,34 +115,40 @@ export function TimerPage() {
 import { FACE_PROMPTS } from '../data/content'
 
 export function FaceLabPage() {
+  const { language } = useLanguage()
   const [current, setCurrent] = useState(FACE_PROMPTS[0])
   const randomize = () => setCurrent(FACE_PROMPTS[Math.floor(Math.random() * FACE_PROMPTS.length)])
 
   return (
     <div className="page">
       <div style={{ paddingTop: 20 }}>
-        <h3>Anatomy Focus</h3>
-        <h2 style={{ marginBottom: 8 }}>FACE LAB</h2>
-        <p style={{ marginBottom: 16 }}>Targeted expression and feature training. Hit randomize for a new prompt.</p>
+        <h3>{t('facelab_label', language)}</h3>
+        <h2 style={{ marginBottom: 8 }}>{t('facelab_title', language)}</h2>
+        <p style={{ marginBottom: 16 }}>{t('facelab_intro', language)}</p>
       </div>
 
       <div style={{ background: 'var(--card)', border: '2px solid var(--accent3)', borderRadius: 12, padding: 20, textAlign: 'center', marginBottom: 16, boxShadow: '0 2px 8px rgba(37,99,168,.12)' }}>
-        <div style={{ fontFamily: 'var(--font-display)', fontSize: 28, color: 'var(--accent3)', marginBottom: 4 }}>{current.title}</div>
-        <p style={{ fontSize: 13 }}>{current.desc}</p>
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 28, color: 'var(--accent3)', marginBottom: 4 }}>{localize(current.title, language)}</div>
+        <p style={{ fontSize: 13 }}>{localize(current.desc, language)}</p>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 16 }}>
-        {[['EYES', current.eyes], ['JAW', current.jaw], ['MOUTH', current.mouth], ['ENERGY', current.energy]].map(([label, val]) => (
+        {[
+          [t('facelab_eyes', language), localize(current.eyes, language)],
+          [t('facelab_jaw', language), localize(current.jaw, language)],
+          [t('facelab_mouth', language), localize(current.mouth, language)],
+          [t('facelab_energy', language), localize(current.energy, language)],
+        ].map(([label, val]) => (
           <div key={label} style={{ background: 'var(--card)', border: '1.5px solid var(--border)', borderRadius: 8, padding: '10px 12px', fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--muted)', letterSpacing: '.5px' }}>
             {label}<span style={{ display: 'block', fontSize: 13, color: 'var(--text)', fontWeight: 700, marginTop: 2 }}>{val}</span>
           </div>
         ))}
       </div>
 
-      <button className="btn btn-primary btn-full" onClick={randomize} style={{ marginBottom: 16 }}>↻ RANDOMIZE FACE</button>
+      <button className="btn btn-primary btn-full" onClick={randomize} style={{ marginBottom: 16 }}>{t('facelab_randomize', language)}</button>
 
       <div style={{ background: 'var(--bg3)', border: '1.5px dashed var(--border)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 180, fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--muted)', letterSpacing: 1, textTransform: 'uppercase' }}>
-        [ Draw your interpretation here ]
+        {t('facelab_placeholder', language)}
       </div>
     </div>
   )
@@ -150,15 +156,142 @@ export function FaceLabPage() {
 
 // ── STUDIO PAGE ──────────────────────────────────────────────────────────────
 import { CHAR_ARCHETYPES, CHAR_POSES, CHAR_EXPRESSIONS } from '../data/content'
+import { useAuth } from '../hooks/useAuth'
+import { useCharacters } from '../hooks/useCharacters'
 
 const RANDOM_CHARS = [
-  { name: 'ZERO', arch: 'Antihero', pose: 'Slouched swagger', clothes: 'Military surplus coat, torn shirt, unlaced boots', expr: 'Tired contempt', notes: 'Former session musician who burned every bridge. Still plays better than anyone in the room.' },
-  { name: 'RYN', arch: 'Streetwise Musician', pose: 'Arms crossed, weight shifted', clothes: 'Sleeveless denim vest covered in patches, tight jeans, platforms', expr: 'Cold stare', notes: 'Bassist. Never smiles on stage. Crowds love her for it.' },
-  { name: 'BLAZE', arch: 'Underground DJ', pose: 'Mid-motion stride', clothes: 'Oversized tracksuit, chain necklace, wraparound shades', expr: 'Sharp grin', notes: "Hasn't slept in two days. This is his natural state." },
-  { name: 'MOTH', arch: 'Punk Witch', pose: 'Looking over shoulder', clothes: 'Long tattered coat, rings on every finger, heavy boots', expr: 'Bitter smirk', notes: "Everyone thinks she's from somewhere else. She lets them think that." },
+  { name: 'ZERO', arch: { en: 'Antihero', no: 'Antihelt' }, pose: { en: 'Slouched swagger', no: 'Sammensunket swagger' }, clothes: { en: 'Military surplus coat, torn shirt, unlaced boots', no: 'Militærovreskuddsfrakk, revet skjorte, uknyttede støvler' }, expr: { en: 'Tired contempt', no: 'Trøtt forakt' }, notes: { en: 'Former session musician who burned every bridge. Still plays better than anyone in the room.', no: 'Tidligere sessionmusiker som har brent alle broer. Spiller fortsatt bedre enn alle andre i rommet.' } },
+  { name: 'RYN', arch: { en: 'Streetwise Musician', no: 'Streetwise musiker' }, pose: { en: 'Arms crossed, weight shifted', no: 'Armer i kors, vekt forskjøvet' }, clothes: { en: 'Sleeveless denim vest covered in patches, tight jeans, platforms', no: 'Ermeløs dongerivest full av merker, tette jeans, plattformsko' }, expr: { en: 'Cold stare', no: 'Kaldt blikk' }, notes: { en: 'Bassist. Never smiles on stage. Crowds love her for it.', no: 'Bassist. Smiler aldri på scenen. Publikum elsker henne for det.' } },
+  { name: 'BLAZE', arch: { en: 'Underground DJ', no: 'Undergrunns-DJ' }, pose: { en: 'Mid-motion stride', no: 'Skritt i bevegelse' }, clothes: { en: 'Oversized tracksuit, chain necklace, wraparound shades', no: 'Oversized treningsdress, kjedehalskjede, wraparound solbriller' }, expr: { en: 'Sharp grin', no: 'Skarpt grin' }, notes: { en: "Hasn't slept in two days. This is his natural state.", no: 'Har ikke sovet på to dager. Dette er hans naturlige tilstand.' } },
+  { name: 'MOTH', arch: { en: 'Punk Witch', no: 'Punk-heks' }, pose: { en: 'Looking over shoulder', no: 'Ser over skulderen' }, clothes: { en: 'Long tattered coat, rings on every finger, heavy boots', no: 'Lang fillete frakk, ringer på hver finger, tunge støvler' }, expr: { en: 'Bitter smirk', no: 'Bittert smil' }, notes: { en: "Everyone thinks she's from somewhere else. She lets them think that.", no: 'Alle tror hun kommer fra et annet sted. Hun lar dem tro det.' } },
 ]
 
+export function StudioPage() {
+  const { language } = useLanguage()
+  const { user } = useAuth()
+  const { characters, save, remove } = useCharacters(user?.id)
+  const [form, setForm] = useState({ name: '', arch: '', pose: '', clothes: '', expr: '', notes: '' })
+  const [card, setCard] = useState(null)
+  const [saved, setSaved] = useState(false)
+
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
+
+  const build = () => { setCard({ ...form }); setSaved(false) }
+
+  const saveCard = async () => {
+    const { error } = await save({
+      name: form.name, archetype: form.arch, pose: form.pose,
+      clothing: form.clothes, expression: form.expr, notes: form.notes,
+    })
+    if (!error) setSaved(true)
+  }
+
+  const random = () => {
+    const c = RANDOM_CHARS[Math.floor(Math.random() * RANDOM_CHARS.length)]
+    setForm({
+      name: c.name,
+      arch: localize(c.arch, language),
+      pose: localize(c.pose, language),
+      clothes: localize(c.clothes, language),
+      expr: localize(c.expr, language),
+      notes: localize(c.notes, language),
+    })
+  }
+
+  return (
+    <div className="page">
+      <div style={{ paddingTop: 20 }}>
+        <h3>{t('studio_label', language)}</h3>
+        <h2 style={{ marginBottom: 8 }}>{t('studio_title', language)}</h2>
+        <p style={{ marginBottom: 16 }}>{t('studio_intro', language)}</p>
+      </div>
+
+      <div className="field">
+        <label>{t('studio_name', language)}</label>
+        <input type="text" value={form.name} onChange={e => set('name', e.target.value)} placeholder={t('studio_name_placeholder', language)} />
+      </div>
+
+      {[
+        { key: 'arch', labelKey: 'studio_archetype', options: CHAR_ARCHETYPES },
+        { key: 'pose', labelKey: 'studio_pose', options: CHAR_POSES },
+        { key: 'expr', labelKey: 'studio_expression', options: CHAR_EXPRESSIONS },
+      ].map(f => (
+        <div className="field" key={f.key}>
+          <label>{t(f.labelKey, language)}</label>
+          <select value={form[f.key]} onChange={e => set(f.key, e.target.value)}>
+            <option value="">{t('studio_select', language)}</option>
+            {f.options.map((o, i) => (
+              <option key={i} value={localize(o, language)}>{localize(o, language)}</option>
+            ))}
+          </select>
+        </div>
+      ))}
+
+      <div className="field">
+        <label>{t('studio_clothing', language)}</label>
+        <input type="text" value={form.clothes} onChange={e => set('clothes', e.target.value)} placeholder={t('studio_clothing_placeholder', language)} />
+      </div>
+      <div className="field">
+        <label>{t('studio_notes', language)}</label>
+        <textarea rows="3" value={form.notes} onChange={e => set('notes', e.target.value)} placeholder={t('studio_notes_placeholder', language)} />
+      </div>
+
+      <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+        <button className="btn btn-primary" onClick={build} style={{ flex: 1 }}>{t('studio_build', language)}</button>
+        <button className="btn btn-outline" onClick={random} style={{ flex: 1 }}>{t('studio_random', language)}</button>
+      </div>
+
+      {card && (
+        <div style={{ background: 'var(--card)', border: '2px solid var(--accent)', borderRadius: 12, padding: 20, marginTop: 16, animation: 'fadeIn .3s ease', boxShadow: '0 3px 12px rgba(212,80,10,.15)' }}>
+          <span className="tag tag-orange" style={{ marginBottom: 8, display: 'inline-block' }}>{t('studio_concept_tag', language)}</span>
+          <h2 style={{ color: 'var(--accent)', marginBottom: 4 }}>{card.name || t('studio_unnamed', language)}</h2>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, marginBottom: 12 }}>{card.arch?.toUpperCase()}</p>
+          <hr style={{ border: 'none', borderTop: '1px solid var(--border)', marginBottom: 12 }} />
+          {[
+            [t('studio_detail_pose', language), card.pose],
+            [t('studio_detail_clothing', language), card.clothes],
+            [t('studio_detail_expression', language), card.expr],
+            [t('studio_detail_backstory', language), card.notes],
+          ].map(([l, v]) => v ? (
+            <div key={l} style={{ marginBottom: 8 }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--accent)', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 2 }}>{l}</div>
+              <p style={{ fontSize: 13 }}>{v}</p>
+            </div>
+          ) : null)}
+          <div className="moto-card" style={{ marginTop: 14 }}>
+            <div className="moto-text" style={{ fontSize: 11 }}>
+              {t('studio_prompt_template', language)(
+                card.arch?.toLowerCase() || '',
+                card.expr?.toLowerCase() || '',
+                card.pose?.toLowerCase() || '',
+                card.clothes?.toLowerCase() || ''
+              )}
+            </div>
+          </div>
+          <button
+            className={`btn ${saved ? 'btn-outline' : 'btn-primary'} btn-full`}
+            onClick={!saved ? saveCard : undefined}
+            style={{ marginTop: 12 }}
+          >
+            {saved ? t('studio_saved', language) : t('studio_save', language)}
+          </button>
+        </div>
+      )}
+
+      {characters.length > 0 && (
+        <>
+          <div className="section-div" style={{ marginTop: 24 }}><h3 style={{ margin: 0 }}>{t('studio_your_characters', language)}</h3></div>
+          {characters.map(c => (
+            <CharacterListCard key={c.id} character={c} onRemove={remove} />
+          ))}
+        </>
+      )}
+    </div>
+  )
+}
+
 function CharacterListCard({ character: c, onRemove }) {
+  const { language } = useLanguage()
   const [open, setOpen] = useState(false)
   return (
     <div
@@ -169,7 +302,7 @@ function CharacterListCard({ character: c, onRemove }) {
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>{c.name || 'Unnamed'}</div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>{c.name || t('studio_unnamed', language)}</div>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--muted)', marginTop: 2 }}>{c.archetype}</div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -184,10 +317,10 @@ function CharacterListCard({ character: c, onRemove }) {
       {open && (
         <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px dashed var(--border)' }}>
           {[
-            ['Pose', c.pose],
-            ['Clothing', c.clothing],
-            ['Expression', c.expression],
-            ['Backstory', c.notes],
+            [t('studio_detail_pose', language), c.pose],
+            [t('studio_detail_clothing', language), c.clothing],
+            [t('studio_detail_expression', language), c.expression],
+            [t('studio_detail_backstory', language), c.notes],
           ].map(([label, value]) => value ? (
             <div key={label} style={{ marginBottom: 8 }}>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--accent)', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 2 }}>{label}</div>
@@ -196,7 +329,12 @@ function CharacterListCard({ character: c, onRemove }) {
           ) : null)}
           <div className="moto-card" style={{ marginTop: 12 }}>
             <div className="moto-text" style={{ fontSize: 11 }}>
-              Draw a long-limbed {c.archetype?.toLowerCase()} with {c.expression?.toLowerCase()} eyes and {c.pose?.toLowerCase()} stance.
+              {t('studio_prompt_template', language)(
+                c.archetype?.toLowerCase() || '',
+                c.expression?.toLowerCase() || '',
+                c.pose?.toLowerCase() || '',
+                c.clothing?.toLowerCase() || ''
+              )}
             </div>
           </div>
         </div>
@@ -205,118 +343,14 @@ function CharacterListCard({ character: c, onRemove }) {
   )
 }
 
-export function StudioPage() {
-  const { user } = useAuth()
-  const { characters, save, remove } = useCharacters(user?.id)
-  const [form, setForm] = useState({ name: '', arch: '', pose: '', clothes: '', expr: '', notes: '' })
-  const [card, setCard] = useState(null)
-  const [saved, setSaved] = useState(false)
-
-  const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
-
-  const build = () => { setCard({ ...form }); setSaved(false) }
-
-  const saveCard = async () => {
-    const { error } = await save({
-      name: form.name, archetype: form.arch, pose: form.pose,
-      clothing: form.clothes, expression: form.expr, notes: form.notes
-    })
-    if (!error) setSaved(true)
-  }
-
-  const random = () => {
-    const c = RANDOM_CHARS[Math.floor(Math.random() * RANDOM_CHARS.length)]
-    setForm({ name: c.name, arch: c.arch, pose: c.pose, clothes: c.clothes, expr: c.expr, notes: c.notes })
-  }
-
-  return (
-    <div className="page">
-      <div style={{ paddingTop: 20 }}>
-        <h3>Build Your Character</h3>
-        <h2 style={{ marginBottom: 8 }}>CHARACTER STUDIO</h2>
-        <p style={{ marginBottom: 16 }}>Define a character. Build their identity. Draw them with attitude.</p>
-      </div>
-
-      {[{ key: 'name', label: 'Character Name', placeholder: 'e.g. Ryn, Zero, Blaze...' }].map(f => (
-        <div className="field" key={f.key}>
-          <label>{f.label}</label>
-          <input type="text" value={form[f.key]} onChange={e => set(f.key, e.target.value)} placeholder={f.placeholder} />
-        </div>
-      ))}
-
-      {[
-        { key: 'arch', label: 'Archetype / Vibe', options: CHAR_ARCHETYPES },
-        { key: 'pose', label: 'Pose Style', options: CHAR_POSES },
-        { key: 'expr', label: 'Expression', options: CHAR_EXPRESSIONS },
-      ].map(f => (
-        <div className="field" key={f.key}>
-          <label>{f.label}</label>
-          <select value={form[f.key]} onChange={e => set(f.key, e.target.value)}>
-            <option value="">Select...</option>
-            {f.options.map(o => <option key={o}>{o}</option>)}
-          </select>
-        </div>
-      ))}
-
-      <div className="field">
-        <label>Clothing Keywords</label>
-        <input type="text" value={form.clothes} onChange={e => set('clothes', e.target.value)} placeholder="e.g. oversized jacket, torn tights..." />
-      </div>
-      <div className="field">
-        <label>Notes / Backstory Hook</label>
-        <textarea rows="3" value={form.notes} onChange={e => set('notes', e.target.value)} placeholder="e.g. lost their band, now plays alone on rooftops..." />
-      </div>
-
-      <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
-        <button className="btn btn-primary" onClick={build} style={{ flex: 1 }}>BUILD CARD</button>
-        <button className="btn btn-outline" onClick={random} style={{ flex: 1 }}>↻ RANDOM</button>
-      </div>
-
-      {card && (
-        <div style={{ background: 'var(--card)', border: '2px solid var(--accent)', borderRadius: 12, padding: 20, marginTop: 16, boxShadow: '0 3px 12px rgba(212,80,10,.15)' }}>
-          <span className="tag tag-orange" style={{ marginBottom: 8, display: 'inline-block' }}>CHARACTER CONCEPT</span>
-          <h2 style={{ color: 'var(--accent)', marginBottom: 4 }}>{card.name || 'UNNAMED'}</h2>
-          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, marginBottom: 12 }}>{card.arch?.toUpperCase()}</p>
-          <hr style={{ border: 'none', borderTop: '1px solid var(--border)', marginBottom: 12 }} />
-          {[['Pose', card.pose], ['Clothing', card.clothes], ['Expression', card.expr], ['Backstory', card.notes]].map(([l, v]) => v ? (
-            <div key={l} style={{ marginBottom: 8 }}>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--accent)', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 2 }}>{l}</div>
-              <p style={{ fontSize: 13 }}>{v}</p>
-            </div>
-          ) : null)}
-          <button
-            className={`btn ${saved ? 'btn-outline' : 'btn-primary'} btn-full`}
-            onClick={!saved ? saveCard : undefined}
-            style={{ marginTop: 12 }}
-          >
-            {saved ? '✓ SAVED TO YOUR COLLECTION' : 'SAVE CHARACTER'}
-          </button>
-        </div>
-      )}
-
-      {/* Saved characters */}
-      {characters.length > 0 && (
-        <>
-          <div className="section-div" style={{ marginTop: 24 }}><h3 style={{ margin: 0 }}>YOUR CHARACTERS</h3></div>
-          {characters.map(c => (
-  <CharacterListCard key={c.id} character={c} onRemove={remove} />
-))}
-        </>
-      )}
-    </div>
-  )
-}
-
 // ── PROGRESS PAGE ─────────────────────────────────────────────────────────────
-import { useAuth } from '../hooks/useAuth'
-import { useProgress } from '../hooks/useProgress'
 import { ACHIEVEMENTS } from '../data/content'
 
 export function ProgressPage() {
+  const { language } = useLanguage()
   const { user } = useAuth()
   const { completedDaysCount, progressPct, streak, totalMinutes, completedPrinciples } = useProgress(user?.id)
 
-  // Simple achievement unlocking logic
   const unlockedIds = new Set()
   if (completedDaysCount >= 1) unlockedIds.add('first_sketch')
   if (streak >= 3) unlockedIds.add('streak_3')
@@ -327,20 +361,20 @@ export function ProgressPage() {
   return (
     <div className="page">
       <div style={{ paddingTop: 20 }}>
-        <h3>Your Stats</h3>
-        <h2 style={{ marginBottom: 16 }}>PROGRESS</h2>
+        <h3>{t('progress_stats', language)}</h3>
+        <h2 style={{ marginBottom: 16 }}>{t('progress_title', language)}</h2>
       </div>
 
       <div style={{ marginBottom: 16 }}>
-        <div className="streak-badge">🔥 {streak}-DAY STREAK</div>
+        <div className="streak-badge">🔥 {streak}-{t('progress_streak_suffix', language)}</div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16 }}>
         {[
-          [completedDaysCount, 'Days Done'],
-          [completedPrinciples.size, 'Principles'],
-          [totalMinutes, 'Min Practiced'],
-          [`${progressPct}%`, '30-Day Plan'],
+          [completedDaysCount, t('progress_days_done', language)],
+          [completedPrinciples.size, t('progress_principles', language)],
+          [totalMinutes, t('progress_min_practiced', language)],
+          [`${progressPct}%`, t('progress_plan_pct', language)],
         ].map(([v, l]) => (
           <div key={l} style={{ background: 'var(--card)', border: '1.5px solid var(--border)', borderRadius: 10, padding: 14, textAlign: 'center', boxShadow: '0 1px 4px rgba(42,37,32,.06)' }}>
             <div style={{ fontFamily: 'var(--font-display)', fontSize: 40, color: 'var(--accent)', lineHeight: 1 }}>{v}</div>
@@ -349,15 +383,15 @@ export function ProgressPage() {
         ))}
       </div>
 
-      <div className="section-div"><h3 style={{ margin: 0 }}>30-DAY OVERVIEW</h3></div>
+      <div className="section-div"><h3 style={{ margin: 0 }}>{t('progress_overview', language)}</h3></div>
       <div className="progress-bar" style={{ height: 8 }}>
         <div className="progress-fill" style={{ width: `${progressPct}%` }} />
       </div>
       <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--muted)', margin: '4px 0 16px', textAlign: 'right' }}>
-        {completedDaysCount} / 30 DAYS — {progressPct}%
+        {completedDaysCount} / 30 {t('progress_days_of_30', language)} — {progressPct}%
       </div>
 
-      <div className="section-div"><h3 style={{ margin: 0 }}>ACHIEVEMENTS</h3></div>
+      <div className="section-div"><h3 style={{ margin: 0 }}>{t('progress_achievements', language)}</h3></div>
       {ACHIEVEMENTS.map(a => {
         const unlocked = unlockedIds.has(a.id)
         return (
@@ -370,10 +404,10 @@ export function ProgressPage() {
               opacity: unlocked ? 1 : .4,
             }}>{a.icon}</div>
             <div>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>{a.title}</div>
-              <p style={{ fontSize: 12 }}>{a.desc}</p>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>{localize(a.title, language)}</div>
+              <p style={{ fontSize: 12 }}>{localize(a.desc, language)}</p>
             </div>
-            {unlocked && <span className="tag tag-green" style={{ marginLeft: 'auto' }}>EARNED</span>}
+            {unlocked && <span className="tag tag-green" style={{ marginLeft: 'auto' }}>{t('progress_earned', language)}</span>}
           </div>
         )
       })}
@@ -382,46 +416,28 @@ export function ProgressPage() {
 }
 
 // ── INSPO PAGE ─────────────────────────────────────────────────────────────
-const ALL_TAGS = ['all', 'gesture', 'pose', 'face', 'expressions', 'silhouette', 'character', 'clothing', 'ink']
+import { useReferences } from '../hooks/useReferences'
 
-// Illustration prompts — since we can't hotlink images, we describe what to study
-const INSPO_CARDS = [
-  { title: 'Energy & gesture', desc: 'Start with the spine. The energy line is the foundation of every good figure. Everything else is detail.', tags: ['gesture', 'pose'], tip: 'Draw 10 gesture lines in 2 minutes. No detail.' },
-  { title: 'Attitude in stance', desc: 'Hip tilt + shoulder angle + head tilt = an opinion. Neutral kills the drawing.', tags: ['pose', 'character'], tip: 'Push every angle 30% further than feels comfortable.' },
-  { title: 'Strong silhouette', desc: 'Fill it black. Does it still work? If yes, the design is solid.', tags: ['silhouette', 'character'], tip: 'Draw 5 characters as solid black shapes only.' },
-  { title: 'Expressive eyes', desc: 'Half-lidded, asymmetric, heavy-browed. Eyes carry the whole personality.', tags: ['face', 'expressions'], tip: 'Draw 20 eye pairs. Vary lid weight, angle, asymmetry.' },
-  { title: 'Clothing as identity', desc: "The jacket tells you who they are before you see their face.", tags: ['clothing', 'character'], tip: 'Design 3 characters identifiable by clothes alone.' },
-  { title: 'Ink confidence', desc: 'Commit to the line. The wobble is not a mistake — it is the character.', tags: ['ink'], tip: 'Draw without lifting the pen. No erasing.' },
-  { title: 'Abstract punk shapes', desc: 'Study the shapes: angular, spiky, asymmetric. Design is attitude.', tags: ['silhouette', 'character'], tip: 'Build a character from triangles and sharp angles only.' },
-  { title: 'Contrast: detail vs. rest', desc: 'The busy area pops because the quiet area gives it room.', tags: ['character'], tip: '70% flat shapes, 30% dense detail. Not 50/50.' },
-  { title: 'Face structure', desc: 'Cheekbones, jaw angle, brow ridge — architecture before expression.', tags: ['face', 'expressions'], tip: 'Map the skull planes before drawing features.' },
-  { title: 'Performance energy', desc: 'Live performance = pure gesture. Body communicates before the face does.', tags: ['gesture', 'pose'], tip: 'Sketch performers from video paused at peak motion.' },
-]
+const ALL_TAGS = ['all', 'gesture', 'pose', 'face', 'expressions', 'silhouette', 'character', 'clothing', 'ink', 'linework']
 
 export function InspoPage() {
+  const { language } = useLanguage()
   const { images, loading } = useReferences()
   const [filter, setFilter] = useState('all')
   const [selected, setSelected] = useState(null)
 
-  const categories = ['all', 'character', 'clothing', 'expressions', 'face', 'gesture', 'ink', 'linework', 'pose', 'silhouette']
-
-  const filtered = filter === 'all'
-    ? images
-    : images.filter(img => img.category === filter)
+  const filtered = filter === 'all' ? images : images.filter(img => img.category === filter)
 
   return (
     <div className="page">
       <div style={{ paddingTop: 20 }}>
-        <h3>Visual References</h3>
-        <h2 style={{ marginBottom: 8 }}>INSPIRATION</h2>
-        <p style={{ marginBottom: 14 }}>
-          Study these references. Notice the attitude, the lines, the shapes. Then put the phone down and draw.
-        </p>
+        <h3>{t('inspo_label', language)}</h3>
+        <h2 style={{ marginBottom: 8 }}>{t('inspo_title', language)}</h2>
+        <p style={{ marginBottom: 14 }}>{t('inspo_intro', language)}</p>
       </div>
 
-      {/* Filter tabs */}
       <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 8, marginBottom: 14, scrollbarWidth: 'none' }}>
-        {categories.map(cat => (
+        {ALL_TAGS.map(cat => (
           <button key={cat} onClick={() => setFilter(cat)}
             style={{
               flexShrink: 0, padding: '6px 14px',
@@ -433,23 +449,24 @@ export function InspoPage() {
               cursor: 'pointer', transition: 'all .15s',
               letterSpacing: 1, textTransform: 'uppercase',
             }}>
-            {cat === 'all' ? `ALL (${images.length})` : `${cat} (${images.filter(i => i.category === cat).length})`}
+            {cat === 'all'
+              ? `${t('inspo_all', language)} (${images.length})`
+              : `${cat} (${images.filter(i => i.category === cat).length})`}
           </button>
         ))}
       </div>
 
-      {/* Grid */}
       {loading ? (
         <div style={{ textAlign: 'center', padding: 40, fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--muted)', letterSpacing: 2 }}>
-          LOADING REFERENCES...
+          {t('inspo_loading', language)}
         </div>
       ) : filtered.length === 0 ? (
         <div style={{ textAlign: 'center', padding: 40, fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--muted)', letterSpacing: 2 }}>
-          NO IMAGES YET — UPLOAD TO SUPABASE STORAGE
+          {t('inspo_empty', language)}
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 16 }}>
-          {filtered.map((img, i) => (
+          {filtered.map((img) => (
             <div key={img.name} onClick={() => setSelected(img)}
               style={{
                 borderRadius: 10, overflow: 'hidden',
@@ -473,55 +490,48 @@ export function InspoPage() {
                 fontFamily: 'var(--font-mono)', fontSize: 9,
                 color: '#f7f4ef', letterSpacing: 1, textTransform: 'uppercase',
               }}>
-                {img.category}
+                {localize(img.info.label, language)}
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Lightbox */}
       {selected && (
-  <div
-    onClick={() => setSelected(null)}
-    style={{ position: 'fixed', inset: 0, background: 'rgba(42,37,32,.85)', zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
-  >
-    <div onClick={e => e.stopPropagation()}
-      style={{ maxWidth: 440, width: '100%', background: 'var(--card)', borderRadius: 14, overflow: 'hidden', position: 'relative', boxShadow: '0 8px 32px rgba(42,37,32,.3)' }}>
-      <img
-        src={selected.url}
-        alt={selected.name}
-        style={{ width: '100%', maxHeight: '45vh', objectFit: 'cover', display: 'block', background: 'var(--bg3)' }}
-      />
-      <button onClick={() => setSelected(null)}
-        style={{ position: 'absolute', top: 10, right: 10, background: 'rgba(42,37,32,.6)', border: 'none', color: '#fff', borderRadius: '50%', width: 32, height: 32, cursor: 'pointer', fontSize: 16 }}>
-        ✕
-      </button>
-      <div style={{ padding: 16 }}>
-        <h3 style={{ marginBottom: 4 }}>REFERENCE</h3>
-        <div style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--text)', marginBottom: 10 }}>
-          {selected.info.label?.toUpperCase()}
-        </div>
-        {selected.info.desc && (
-          <p style={{ fontSize: 13, marginBottom: 12, lineHeight: 1.6 }}>{selected.info.desc}</p>
-        )}
-        {selected.info.tip && (
-          <div className="moto-card">
-            <div className="moto-text" style={{ fontSize: 12 }}>Try this: {selected.info.tip}</div>
+        <div
+          onClick={() => setSelected(null)}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(42,37,32,.85)', zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
+        >
+          <div onClick={e => e.stopPropagation()}
+            style={{ maxWidth: 440, width: '100%', background: 'var(--card)', borderRadius: 14, overflow: 'hidden', position: 'relative', boxShadow: '0 8px 32px rgba(42,37,32,.3)' }}>
+            <img src={selected.url} alt={selected.name} style={{ width: '100%', maxHeight: '45vh', objectFit: 'cover', display: 'block', background: 'var(--bg3)' }} />
+            <button onClick={() => setSelected(null)}
+              style={{ position: 'absolute', top: 10, right: 10, background: 'rgba(42,37,32,.6)', border: 'none', color: '#fff', borderRadius: '50%', width: 32, height: 32, cursor: 'pointer', fontSize: 16 }}>
+              ✕
+            </button>
+            <div style={{ padding: 16 }}>
+              <h3 style={{ marginBottom: 4 }}>{t('inspo_reference', language)}</h3>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--text)', marginBottom: 10 }}>
+                {localize(selected.info.label, language).toUpperCase()}
+              </div>
+              {localize(selected.info.desc, language) && (
+                <p style={{ fontSize: 13, marginBottom: 12, lineHeight: 1.6 }}>{localize(selected.info.desc, language)}</p>
+              )}
+              {localize(selected.info.tip, language) && (
+                <div className="moto-card">
+                  <div className="moto-text" style={{ fontSize: 12 }}>{t('inspo_try_this', language)} {localize(selected.info.tip, language)}</div>
+                </div>
+              )}
+              <span className="tag tag-orange" style={{ marginTop: 10, display: 'inline-block' }}>
+                {selected.category.toUpperCase()}
+              </span>
+            </div>
           </div>
-        )}
-        <span className="tag tag-orange" style={{ marginTop: 10, display: 'inline-block' }}>
-          {selected.category.toUpperCase()}
-        </span>
-      </div>
-    </div>
-  </div>
-)}
+        </div>
+      )}
 
       <div style={{ background: 'var(--bg3)', border: '1.5px solid var(--border)', borderRadius: 8, padding: 12, marginTop: 4 }}>
-        <p style={{ fontSize: 11, lineHeight: 1.6 }}>
-          Images are for educational reference only. All rights belong to their respective creators.
-        </p>
+        <p style={{ fontSize: 11, lineHeight: 1.6 }}>{t('inspo_legal', language)}</p>
       </div>
     </div>
   )

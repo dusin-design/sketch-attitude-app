@@ -1,10 +1,14 @@
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { useProgress } from '../hooks/useProgress'
-import { QUOTES, PHASES } from '../data/content'
+import { useLanguage } from '../contexts/LanguageContext'
+import { t } from '../data/strings'
+import { QUOTES, PHASES, localize } from '../data/content'
+import LanguageToggle from '../components/LanguageToggle'
 
 export default function HomePage() {
   const { user, signOut } = useAuth()
+  const { language } = useLanguage()
   const { completedDaysCount, progressPct, streak, currentDay } = useProgress(user?.id)
   const navigate = useNavigate()
 
@@ -13,70 +17,68 @@ export default function HomePage() {
 
   return (
     <div className="page">
-      {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', paddingTop: 24 }}>
         <div>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--accent)', letterSpacing: 3, textTransform: 'uppercase', marginBottom: 4 }}>
-            ★ Daily Training App
+            {t('auth_eyebrow', language)}
           </div>
           <div style={{ fontFamily: 'var(--font-display)', fontSize: 52, lineHeight: .9 }}>
             SKETCH<br /><span style={{ color: 'var(--accent)' }}>ATTITUDE</span>
           </div>
         </div>
-        <button
-          onClick={signOut}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--muted)', marginTop: 8 }}
-        >
-          SIGN OUT
-        </button>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 10, marginTop: 6 }}>
+          <LanguageToggle />
+          <button
+            onClick={signOut}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--muted)' }}
+          >
+            {t('home_sign_out', language)}
+          </button>
+        </div>
       </div>
 
       <hr className="divider" style={{ marginTop: 20 }} />
 
-      {/* Quote */}
-      <h3>Today's Motivation</h3>
+      <h3>{t('home_motivation', language)}</h3>
       <div className="moto-card">
-        <div className="moto-text">"{quote}"</div>
+        <div className="moto-text">"{localize(quote, language)}"</div>
       </div>
 
-      {/* Stats */}
-      <h3>Your Progress</h3>
+      <h3>{t('home_progress', language)}</h3>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16 }}>
-        <StatCard value={streak} label="Day streak" />
-        <StatCard value={`${progressPct}%`} label="30-day plan" />
-        <StatCard value={completedDaysCount} label="Days done" />
-        <StatCard value={currentDay} label="Current day" />
+        <StatCard value={streak} label={t('home_day_streak', language)} />
+        <StatCard value={`${progressPct}%`} label={t('home_plan_pct', language)} />
+        <StatCard value={completedDaysCount} label={t('home_days_done', language)} />
+        <StatCard value={currentDay} label={t('home_current_day', language)} />
       </div>
 
-      {/* Today's mission */}
       <div className="card card-accent">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
           <div>
-            <h3 style={{ marginBottom: 2 }}>TODAY'S MISSION</h3>
+            <h3 style={{ marginBottom: 2 }}>{t('home_mission', language)}</h3>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--text)', fontWeight: 700 }}>
-              Day {currentDay} — {todayPhase.label}
+              {t('home_day_label', language)} {currentDay} — {localize(todayPhase.label, language)}
             </div>
           </div>
-          <span className="tag tag-yellow">{todayPhase.mins} MIN</span>
+          <span className="tag tag-yellow">{todayPhase.mins} {t('min_suffix', language)}</span>
         </div>
-        <p style={{ marginBottom: 12 }}>{todayPhase.desc}</p>
+        <p style={{ marginBottom: 12 }}>{localize(todayPhase.desc, language)}</p>
         <button className="btn btn-primary btn-full" onClick={() => navigate('/train')}>
-          OPEN TODAY'S EXERCISE →
+          {t('home_open_exercise', language)}
         </button>
       </div>
 
-      {/* Quick access */}
-      <div className="section-div"><h3 style={{ margin: 0 }}>QUICK ACCESS</h3></div>
+      <div className="section-div"><h3 style={{ margin: 0 }}>{t('home_quick_access', language)}</h3></div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
         {[
-          { label: '⏱ TIMER',    path: '/timer'     },
-          { label: '✦ STUDIO',   path: '/studio'    },
-          { label: '◑ FACE LAB', path: '/facelab'   },
-          { label: '📐 PRINCIPLES', path: '/principles' },
-        ].map(({ label, path }) => (
+          { labelKey: 'home_timer',    path: '/timer'     },
+          { labelKey: 'home_studio',   path: '/studio'    },
+          { labelKey: 'home_facelab',  path: '/facelab'   },
+          { labelKey: 'home_principles', path: '/principles' },
+        ].map(({ labelKey, path }) => (
           <button key={path} className="btn btn-outline" onClick={() => navigate(path)}
             style={{ justifyContent: 'center', padding: 14 }}>
-            {label}
+            {t(labelKey, language)}
           </button>
         ))}
       </div>

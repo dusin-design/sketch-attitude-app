@@ -1,16 +1,19 @@
 import { useLocation, useNavigate } from 'react-router-dom'
-
-const NAV_ITEMS = [
-  { path: '/',          label: 'HOME',   icon: HomeIcon },
-  { path: '/inspo',     label: 'INSPO',  icon: InspoIcon },
-  { path: '/train',     label: 'TRAIN',  icon: TrainIcon },
-  { path: '/timer',     label: 'TIMER',  icon: TimerIcon },
-  { path: '/progress',  label: 'STATS',  icon: StatsIcon },
-]
+import { useLanguage } from '../contexts/LanguageContext'
+import { t } from '../data/strings'
 
 export default function BottomNav() {
   const location = useLocation()
   const navigate = useNavigate()
+  const { language } = useLanguage()
+
+  const NAV_ITEMS = [
+    { path: '/',          labelKey: 'nav_home',  icon: HomeIcon },
+    { path: '/inspo',     labelKey: 'nav_inspo', icon: InspoIcon },
+    { path: '/train',     labelKey: 'nav_train', icon: TrainIcon },
+    { path: '/timer',     labelKey: 'nav_timer', icon: TimerIcon },
+    { path: '/progress',  labelKey: 'nav_stats', icon: StatsIcon },
+  ]
 
   return (
     <nav style={{
@@ -22,7 +25,7 @@ export default function BottomNav() {
       paddingBottom: 'env(safe-area-inset-bottom)',
       boxShadow: '0 -2px 12px rgba(42,37,32,.08)',
     }}>
-      {NAV_ITEMS.map(({ path, label, icon: Icon }) => {
+      {NAV_ITEMS.map(({ path, labelKey, icon: Icon }) => {
         const active = location.pathname === path
         return (
           <button
@@ -46,7 +49,7 @@ export default function BottomNav() {
             }}
           >
             <Icon size={20} />
-            {label}
+            {t(labelKey, language)}
           </button>
         )
       })}

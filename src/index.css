@@ -26,7 +26,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Subtle grid paper texture */
 body::before {
   content: '';
   position: fixed;
@@ -39,24 +38,16 @@ body::before {
     repeating-linear-gradient(90deg, transparent, transparent 28px, #8a8178 28px, #8a8178 29px);
 }
 
-/* Scrollbar */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: var(--bg2); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-/* Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
 .fade-in { animation: fadeIn .25s ease; }
-.fade-up { animation: fadeUp .3s ease; }
 
-/* Common layout */
 .page {
   max-width: 480px;
   margin: 0 auto;
@@ -66,7 +57,6 @@ body::before {
   animation: fadeIn .25s ease;
 }
 
-/* Typography */
 h1, h2 { font-family: var(--font-display); letter-spacing: .5px; color: var(--text); }
 h1 { font-size: 52px; line-height: .92; }
 h2 { font-size: 34px; }
@@ -81,7 +71,6 @@ h3 {
 }
 p { font-size: 14px; line-height: 1.65; color: var(--muted); }
 
-/* Cards */
 .card {
   background: var(--card);
   border: 1.5px solid var(--border);
@@ -92,7 +81,6 @@ p { font-size: 14px; line-height: 1.65; color: var(--muted); }
 }
 .card-accent { border-left: 4px solid var(--accent); }
 
-/* Tags */
 .tag {
   display: inline-block;
   font-family: var(--font-mono);
@@ -107,7 +95,6 @@ p { font-size: 14px; line-height: 1.65; color: var(--muted); }
 .tag-blue   { background: #deeaf8; color: var(--accent3); border: 1px solid #b0cef0; }
 .tag-green  { background: #e8f5d0; color: #4a7c10; border: 1px solid #c5e080; }
 
-/* Buttons */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -138,7 +125,6 @@ p { font-size: 14px; line-height: 1.65; color: var(--muted); }
 .btn-full { width: 100%; justify-content: center; }
 .btn-danger { background: var(--accent2); color: #fff; }
 
-/* Progress bar */
 .progress-bar {
   height: 5px;
   background: var(--bg3);
@@ -153,7 +139,6 @@ p { font-size: 14px; line-height: 1.65; color: var(--muted); }
   transition: width .5s ease;
 }
 
-/* Divider */
 .divider {
   border: none;
   height: 2px;
@@ -174,7 +159,6 @@ p { font-size: 14px; line-height: 1.65; color: var(--muted); }
   background: repeating-linear-gradient(90deg, var(--border) 0, var(--border) 4px, transparent 4px, transparent 8px);
 }
 
-/* Moto / quote card */
 .moto-card {
   background: var(--accent-light);
   border-left: 4px solid var(--accent);
@@ -190,7 +174,6 @@ p { font-size: 14px; line-height: 1.65; color: var(--muted); }
   line-height: 1.5;
 }
 
-/* Notice */
 .notice {
   background: var(--accent-light);
   border: 1.5px solid #f0c8a8;
@@ -202,7 +185,6 @@ p { font-size: 14px; line-height: 1.65; color: var(--muted); }
   font-family: var(--font-mono);
 }
 
-/* Input */
 input[type="text"],
 input[type="email"],
 input[type="password"],
@@ -223,7 +205,6 @@ select {
 input:focus, textarea:focus, select:focus { border-color: var(--accent); }
 input::placeholder, textarea::placeholder { color: #bbb8b2; }
 
-/* Streak badge */
 .streak-badge {
   display: inline-flex;
   align-items: center;
@@ -238,7 +219,6 @@ input::placeholder, textarea::placeholder { color: #bbb8b2; }
   font-weight: 700;
 }
 
-/* Form field helper */
 .field { margin-bottom: 14px; }
 .field label {
   display: block;
@@ -254,4 +234,30 @@ input::placeholder, textarea::placeholder { color: #bbb8b2; }
   color: var(--accent2);
   margin-top: 4px;
   font-family: var(--font-mono);
+}
+
+.lang-toggle {
+  display: inline-flex;
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 2px;
+  gap: 2px;
+}
+.lang-toggle button {
+  padding: 4px 10px;
+  border: none;
+  background: transparent;
+  border-radius: 16px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  color: var(--muted);
+  transition: all .15s;
+}
+.lang-toggle button.active {
+  background: var(--accent);
+  color: #fff;
 }

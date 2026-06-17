@@ -1,19 +1,22 @@
 import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { useProgress } from '../hooks/useProgress'
-import { PRINCIPLES } from '../data/content'
+import { useLanguage } from '../contexts/LanguageContext'
+import { t } from '../data/strings'
+import { PRINCIPLES, localize } from '../data/content'
 
 export default function PrinciplesPage() {
   const { user } = useAuth()
+  const { language } = useLanguage()
   const { completedPrinciples, markPrincipleComplete } = useProgress(user?.id)
   const [open, setOpen] = useState(null)
 
   return (
     <div className="page">
       <div style={{ paddingTop: 20 }}>
-        <h3>The Method</h3>
-        <h2 style={{ marginBottom: 8 }}>12 PRINCIPLES</h2>
-        <p style={{ marginBottom: 16 }}>The complete visual language of expressive punk-inspired character design.</p>
+        <h3>{t('principles_method', language)}</h3>
+        <h2 style={{ marginBottom: 8 }}>{t('principles_title', language)}</h2>
+        <p style={{ marginBottom: 16 }}>{t('principles_intro', language)}</p>
       </div>
 
       {PRINCIPLES.map((p) => {
@@ -39,17 +42,17 @@ export default function PrinciplesPage() {
               {String(p.id).padStart(2, '0')}
             </div>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>
-              {p.title.toUpperCase()}
+              {localize(p.title, language).toUpperCase()}
             </div>
-            <p style={{ fontSize: 13 }}>{p.short}</p>
+            <p style={{ fontSize: 13 }}>{localize(p.short, language)}</p>
 
             {isOpen && (
               <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1.5px dashed var(--border)' }}
                 onClick={e => e.stopPropagation()}>
                 {[
-                  { label: 'Why it matters', text: p.why },
-                  { label: 'Common mistakes', text: p.mistakes },
-                  { label: 'Mini exercise', text: p.task },
+                  { label: t('principles_why', language), text: localize(p.why, language) },
+                  { label: t('principles_mistakes', language), text: localize(p.mistakes, language) },
+                  { label: t('principles_task', language), text: localize(p.task, language) },
                 ].map(({ label, text }) => (
                   <div key={label} style={{ marginBottom: 10 }}>
                     <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--accent)', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 3 }}>{label}</div>
@@ -61,7 +64,7 @@ export default function PrinciplesPage() {
                   onClick={() => !done && markPrincipleComplete(p.id)}
                   style={{ marginTop: 8 }}
                 >
-                  {done ? '✓ DONE' : 'MARK COMPLETE'}
+                  {done ? t('principles_done', language) : t('principles_mark_complete', language)}
                 </button>
               </div>
             )}
