@@ -350,7 +350,10 @@ function DoneScreen({ drawn, sessElapsed, onRestart }) {
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
+import { useUIChrome } from "../contexts/UIChromeContext";
+
 export default function GestureApp() {
+  const { setImmersive } = useUIChrome();
   const [screen, setScreen]   = useState("setup");
   const [loadErr, setLoadErr] = useState("");
   const [loading, setLoading] = useState(false);
@@ -406,6 +409,12 @@ export default function GestureApp() {
     }, 1000);
     return () => clearInterval(tick);
   }, [screen]);
+
+  // ── Hide bottom nav during the actual drawing session only ─────────────────
+  useEffect(() => {
+    setImmersive(screen === "session");
+    return () => setImmersive(false);
+  }, [screen, setImmersive]);
 
   // ── Keyboard shortcuts ───────────────────────────────────────────────────────
   useEffect(() => {

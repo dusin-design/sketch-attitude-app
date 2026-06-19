@@ -3,6 +3,7 @@ import { useAuth } from './hooks/useAuth'
 import { LanguageProvider } from './contexts/LanguageContext'
 import { SettingsProvider } from './contexts/SettingsContext'
 import BottomNav from './components/BottomNav'
+import { UIChromeProvider } from './contexts/UIChromeContext'
 import AuthPage from './pages/AuthPage'
 import HomePage from './pages/HomePage'
 import TrainPage from './pages/TrainPage'
@@ -57,9 +58,11 @@ export default function App() {
   return (
     <SettingsProvider>
       <LanguageProvider>
+        <UIChromeProvider>
         <BrowserRouter>
           <AppRoutes />
         </BrowserRouter>
+        </UIChromeProvider>
       </LanguageProvider>
     </SettingsProvider>
   )

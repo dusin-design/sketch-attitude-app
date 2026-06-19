@@ -1,11 +1,14 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useLanguage } from '../contexts/LanguageContext'
 import { t } from '../data/strings'
+import { useUIChrome } from '../contexts/UIChromeContext'
 
 export default function BottomNav() {
   const location = useLocation()
   const navigate = useNavigate()
   const { language } = useLanguage()
+  const { immersive } = useUIChrome()
+  if (immersive) return null
 
   const NAV_ITEMS = [
     { path: '/',          labelKey: 'nav_home',  icon: HomeIcon },
