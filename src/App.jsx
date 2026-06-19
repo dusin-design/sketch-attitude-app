@@ -9,6 +9,7 @@ import TrainPage from './pages/TrainPage'
 import PrinciplesPage from './pages/PrinciplesPage'
 import SettingsPage from './pages/SettingsPage'
 import { TimerPage, FaceLabPage, StudioPage, ProgressPage, InspoPage } from './pages/OtherPages'
+import GestureStudioPage from './pages/GestureStudioPage'
 
 function AppRoutes() {
   const { user, loading } = useAuth()
@@ -44,6 +45,7 @@ function AppRoutes() {
         <Route path="/inspo"       element={<InspoPage />} />
         <Route path="/progress"    element={<ProgressPage />} />
         <Route path="/settings"    element={<SettingsPage />} />
+        <Route path="/gesture-studio" element={<GestureStudioPage />} />
         <Route path="*"            element={<Navigate to="/" replace />} />
       </Routes>
       <BottomNav />
