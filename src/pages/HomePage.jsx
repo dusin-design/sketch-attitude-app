@@ -88,10 +88,11 @@ export default function HomePage() {
           { labelKey: 'home_studio',   path: '/studio'    },
           { labelKey: 'home_facelab',  path: '/facelab'   },
           { labelKey: 'home_principles', path: '/principles' },
-        ].map(({ labelKey, path }) => (
+          { label: 'Gesture Studio',   path: '/gesture-studio', full: true },
+        ].map(({ labelKey, label, path, full }) => (
           <button key={path} className="btn btn-outline" onClick={() => navigate(path)}
-            style={{ justifyContent: 'center', padding: 14 }}>
-            {t(labelKey, language)}
+            style={{ justifyContent: 'center', padding: 14, gridColumn: full ? '1 / -1' : 'auto' }}>
+            {label || t(labelKey, language)}
           </button>
         ))}
       </div>

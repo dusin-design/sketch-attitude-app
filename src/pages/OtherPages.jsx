@@ -1,11 +1,13 @@
 // ── TIMER PAGE ──────────────────────────────────────────────────────────────
 import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useLanguage } from '../contexts/LanguageContext'
 import { t } from '../data/strings'
 import { POSE_PROMPTS, localize } from '../data/content'
 
 export function TimerPage() {
   const { language } = useLanguage()
+  const navigate = useNavigate()
   const [preset, setPreset] = useState(30)
   const [remaining, setRemaining] = useState(30)
   const [running, setRunning] = useState(false)
@@ -106,6 +108,18 @@ export function TimerPage() {
         <input type="range" min="1" max="30" value={totalRounds}
           onChange={e => setTotalRounds(+e.target.value)} style={{ flex: 1 }} />
         <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--accent)', width: 20, textAlign: 'right' }}>{totalRounds}</span>
+      </div>
+
+      <div className="section-div"><h3 style={{ margin: 0 }}>GESTURE STUDIO</h3></div>
+      <div className="card card-accent" style={{ marginBottom: 16 }}>
+        <p style={{ marginBottom: 12 }}>
+          {language === 'no'
+            ? 'Tegn fra ekte referansebilder med innebygd timer — god oppvarming før dagens øvelse.'
+            : "Draw from real reference photos with a built-in timer — a good warm-up before today's exercise."}
+        </p>
+        <button className="btn btn-primary btn-full" onClick={() => navigate('/gesture-studio')}>
+          {language === 'no' ? 'Åpne Gesture Studio →' : 'Open Gesture Studio →'}
+        </button>
       </div>
     </div>
   )

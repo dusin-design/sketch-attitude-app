@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { useProgress } from '../hooks/useProgress'
 import { useSketches } from '../hooks/useSketches'
@@ -8,6 +9,7 @@ import { PHASES, QUOTES, localize } from '../data/content'
 
 export default function TrainPage() {
   const { user } = useAuth()
+  const navigate = useNavigate()
   const { language } = useLanguage()
   const { completedDays, progressPct, currentDay, markDayComplete } = useProgress(user?.id)
   const [openDay, setOpenDay] = useState(null)
@@ -37,6 +39,18 @@ export default function TrainPage() {
           language={language}
         />
       ))}
+
+      <div className="section-div"><h3 style={{ margin: 0 }}>GESTURE STUDIO</h3></div>
+      <div className="card card-accent" style={{ marginBottom: 16 }}>
+        <p style={{ marginBottom: 12 }}>
+          {language === 'no'
+            ? 'Tegn fra ekte referansebilder med innebygd timer — god oppvarming før dagens øvelse.'
+            : "Draw from real reference photos with a built-in timer — a good warm-up before today's exercise."}
+        </p>
+        <button className="btn btn-primary btn-full" onClick={() => navigate('/gesture-studio')}>
+          {language === 'no' ? 'Åpne Gesture Studio →' : 'Open Gesture Studio →'}
+        </button>
+      </div>
 
       {openDay && (
         <DayModal

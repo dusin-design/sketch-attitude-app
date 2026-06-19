@@ -77,7 +77,7 @@ function Ring({ left, total, size = 68 }) {
           style={{ transition: "stroke-dasharray 0.9s linear, stroke 0.4s" }}/>
       </svg>
       <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center",
-        justifyContent: "center", fontSize: 14, fontWeight: 700, color: "#e0e0e0",
+        justifyContent: "center", fontFamily: "var(--font-mono)", fontSize: 14, fontWeight: 700, color: "#e0e0e0",
         fontVariantNumeric: "tabular-nums" }}>
         {total === null ? "∞" : left > 99 ? fmt(left) : left}
       </div>
@@ -124,7 +124,7 @@ function Card({ children }) {
 
 function SectionLabel({ children }) {
   return (
-    <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.4,
+    <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, letterSpacing: 1.4,
       color: T.muted, marginBottom: 12 }}>
       {children}
     </div>
@@ -140,16 +140,16 @@ function SetupScreen({ onStart, loading, err }) {
   return (
     <div style={{ minHeight: "100vh", background: T.paper, display: "flex",
       flexDirection: "column", alignItems: "center", justifyContent: "center",
-      padding: "32px 20px", fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+      padding: "32px 20px", fontFamily: "var(--font-body)",
       color: T.warm }}>
       <div style={{ maxWidth: 500, width: "100%" }}>
 
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <div style={{ fontSize: 11, letterSpacing: 3, color: T.muted, marginBottom: 8 }}>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: 3, color: T.muted, marginBottom: 8 }}>
             SKETCH ATTITUDE
           </div>
-          <div style={{ fontSize: 30, fontWeight: 800, color: T.ink, letterSpacing: -0.5 }}>
+          <div style={{ fontFamily: "var(--font-display)", fontSize: 34, color: T.ink, letterSpacing: 0.5 }}>
             Gesture Studio
           </div>
           <div style={{ fontSize: 14, color: T.muted, marginTop: 6 }}>
@@ -227,7 +227,7 @@ function SessionScreen({ images, idx, playing, setPlaying, timeLeft, timer,
 
   return (
     <div style={{ height: "100vh", background: T.dark, display: "flex",
-      flexDirection: "column", fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+      flexDirection: "column", fontFamily: "var(--font-body)",
       overflow: "hidden", userSelect: "none" }}>
 
       {/* Session progress bar */}
@@ -239,7 +239,7 @@ function SessionScreen({ images, idx, playing, setPlaying, timeLeft, timer,
       {/* Top bar */}
       <div style={{ display: "flex", justifyContent: "space-between",
         alignItems: "center", padding: "8px 20px", flexShrink: 0 }}>
-        <span style={{ fontSize: 12, color: "#6a5a48", letterSpacing: 0.5 }}>
+        <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "#6a5a48", letterSpacing: 0.5 }}>
           {catLabel.toUpperCase()}
         </span>
         <span style={{ fontSize: 13, color: "#6a5a48", fontVariantNumeric: "tabular-nums" }}>
@@ -314,11 +314,11 @@ function DoneScreen({ drawn, sessElapsed, onRestart }) {
   return (
     <div style={{ minHeight: "100vh", background: T.paper, display: "flex",
       flexDirection: "column", alignItems: "center", justifyContent: "center",
-      fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+      fontFamily: "var(--font-body)",
       color: T.warm, padding: 32 }}>
       <div style={{ textAlign: "center", maxWidth: 360 }}>
         <div style={{ fontSize: 52, marginBottom: 16 }}>✏️</div>
-        <div style={{ fontSize: 28, fontWeight: 800, color: T.ink, marginBottom: 8 }}>
+        <div style={{ fontFamily: "var(--font-display)", fontSize: 32, color: T.ink, marginBottom: 8 }}>
           Økt fullført
         </div>
         <div style={{ fontSize: 15, color: T.muted, marginBottom: 36 }}>
@@ -330,7 +330,7 @@ function DoneScreen({ drawn, sessElapsed, onRestart }) {
           {[["bilder tegnet", drawn], ["tid brukt", fmt(sessElapsed)]].map(([lab, val]) => (
             <div key={lab} style={{ background: T.card, borderRadius: 16, padding: "20px 28px",
               border: `1px solid ${T.border}`, textAlign: "center", minWidth: 110 }}>
-              <div style={{ fontSize: 30, fontWeight: 800, color: T.accent }}>{val}</div>
+              <div style={{ fontFamily: "var(--font-display)", fontSize: 34, color: T.accent }}>{val}</div>
               <div style={{ fontSize: 11, color: T.muted, marginTop: 4, letterSpacing: 0.8 }}>
                 {lab.toUpperCase()}
               </div>
