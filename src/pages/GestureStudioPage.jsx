@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { supabase } from "../lib/supabase";
 
 // ─── Image sources ────────────────────────────────────────────────────────────
 // Pexels is called through our own /api/pexels serverless function (see /api/pexels.js)
@@ -19,7 +20,23 @@ const SOURCES = {
       return all;
     },
   },
-  // supabase: { label: "Mine bilder", async fetch(queries, supabaseClient) { ... } },
+  gallery: {
+    label: "Mitt galleri",
+    async fetch() {
+      const { data, error } = await supabase.storage
+        .from("sketches")
+        .list("gesture-gallery", { sortBy: { column: "name", order: "asc" } });
+      if (error) throw new Error("Kunne ikke hente galleri: " + error.message);
+      return (data || [])
+        .filter(f => f.name && !f.name.startsWith("."))
+        .map(f => {
+          const { data: urlData } = supabase.storage
+            .from("sketches")
+            .getPublicUrl(`gesture-gallery/${f.name}`);
+          return { id: f.name, url: urlData.publicUrl, credit: null, creditUrl: null };
+        });
+    },
+  },
 };
 
 // ─── Config ───────────────────────────────────────────────────────────────────
@@ -133,6 +150,7 @@ function SectionLabel({ children }) {
 
 // ─── Setup Screen ─────────────────────────────────────────────────────────────
 function SetupScreen({ onStart, loading, err }) {
+  const [source, setSource] = useState("pexels");
   const [cat, setCat] = useState("figure");
   const [timer, setTimer] = useState(60);
   const [sess, setSess] = useState(SESSIONS[1]);
@@ -157,15 +175,26 @@ function SetupScreen({ onStart, loading, err }) {
           </div>
         </div>
 
-        {/* Category */}
+        {/* Source */}
         <Card>
-          <SectionLabel>KATEGORI</SectionLabel>
+          <SectionLabel>KILDE</SectionLabel>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            {CATS.map(c => (
-              <Pill key={c.id} active={cat === c.id} onClick={() => setCat(c.id)}>{c.label}</Pill>
-            ))}
+            <Pill active={source === "pexels"} onClick={() => setSource("pexels")}>Pexels</Pill>
+            <Pill active={source === "gallery"} onClick={() => setSource("gallery")}>Mitt galleri</Pill>
           </div>
         </Card>
+
+        {/* Category — only relevant for Pexels, since the gallery has no tags */}
+        {source === "pexels" && (
+          <Card>
+            <SectionLabel>KATEGORI</SectionLabel>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              {CATS.map(c => (
+                <Pill key={c.id} active={cat === c.id} onClick={() => setCat(c.id)}>{c.label}</Pill>
+              ))}
+            </div>
+          </Card>
+        )}
 
         {/* Timer */}
         <Card>
@@ -196,7 +225,7 @@ function SetupScreen({ onStart, loading, err }) {
         )}
 
         {/* Start */}
-        <button onClick={() => onStart(cat, timer, sess)} disabled={loading}
+        <button onClick={() => onStart(source, cat, timer, sess)} disabled={loading}
           style={{ width: "100%", padding: "16px", borderRadius: 16, border: "none",
             background: loading ? "#c8a080" : T.accent, color: "#fff", fontSize: 16,
             fontWeight: 700, cursor: loading ? "not-allowed" : "pointer",
@@ -266,10 +295,12 @@ function SessionScreen({ images, idx, playing, setPlaying, timeLeft, timer,
           onError={onNext}
         />
         {/* Credit */}
-        <div style={{ position: "absolute", bottom: 12, right: 28,
-          fontSize: 10, color: "rgba(255,255,255,.18)", letterSpacing: 0.3 }}>
-          📷 {photo.credit}
-        </div>
+        {photo.credit && (
+          <div style={{ position: "absolute", bottom: 12, right: 28,
+            fontSize: 10, color: "rgba(255,255,255,.18)", letterSpacing: 0.3 }}>
+            📷 {photo.credit}
+          </div>
+        )}
       </div>
 
       {/* Controls */}
@@ -445,14 +476,22 @@ export default function GestureApp() {
   };
 
   // ── Load images & start session ──────────────────────────────────────────────
-  const startSession = async (catId, timer, sess) => {
+  const startSession = async (sourceId, catId, timer, sess) => {
     setLoading(true); setLoadErr("");
     try {
-      const cat = CATS.find(c => c.id === catId);
-      const photos = await SOURCES.pexels.fetch(cat.q);
-      if (!photos.length) throw new Error("Ingen bilder funnet — prøv en annen kategori");
+      let photos, catLabel;
+      if (sourceId === "gallery") {
+        photos = await SOURCES.gallery.fetch();
+        catLabel = "Mitt galleri";
+        if (!photos.length) throw new Error("Ingen bilder funnet i galleriet ennå");
+      } else {
+        const cat = CATS.find(c => c.id === catId);
+        photos = await SOURCES.pexels.fetch(cat.q);
+        catLabel = cat.label;
+        if (!photos.length) throw new Error("Ingen bilder funnet — prøv en annen kategori");
+      }
 
-      cfg.current = { timer, session: sess, catLabel: cat.label };
+      cfg.current = { timer, session: sess, catLabel };
       setImages(shuffle(photos));
       setIdx(0); setDrawn(0); setSessElapsed(0);
       setTimeLeft(timer ?? 0);
