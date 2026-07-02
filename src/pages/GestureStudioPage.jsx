@@ -21,7 +21,7 @@ const SOURCES = {
     },
   },
   gallery: {
-    label: "Mitt galleri",
+    label: "Anatomi",
     async fetch() {
       const { data, error } = await supabase.storage
         .from("sketches")
@@ -180,7 +180,7 @@ function SetupScreen({ onStart, loading, err }) {
           <SectionLabel>KILDE</SectionLabel>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             <Pill active={source === "pexels"} onClick={() => setSource("pexels")}>Pexels</Pill>
-            <Pill active={source === "gallery"} onClick={() => setSource("gallery")}>Mitt galleri</Pill>
+            <Pill active={source === "gallery"} onClick={() => setSource("gallery")}>Anatomi</Pill>
           </div>
         </Card>
 
@@ -482,7 +482,7 @@ export default function GestureApp() {
       let photos, catLabel;
       if (sourceId === "gallery") {
         photos = await SOURCES.gallery.fetch();
-        catLabel = "Mitt galleri";
+        catLabel = "Anatomi";
         if (!photos.length) throw new Error("Ingen bilder funnet i galleriet ennå");
       } else {
         const cat = CATS.find(c => c.id === catId);
