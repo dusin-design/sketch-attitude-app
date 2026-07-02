@@ -37,6 +37,23 @@ const SOURCES = {
         });
     },
   },
+  doll: {
+    label: "Referansedukke",
+    async fetch() {
+      const { data, error } = await supabase.storage
+        .from("sketches")
+        .list("gesture-doll", { sortBy: { column: "name", order: "asc" } });
+      if (error) throw new Error("Kunne ikke hente referansedukke: " + error.message);
+      return (data || [])
+        .filter(f => f.name && !f.name.startsWith("."))
+        .map(f => {
+          const { data: urlData } = supabase.storage
+            .from("sketches")
+            .getPublicUrl(`gesture-doll/${f.name}`);
+          return { id: f.name, url: urlData.publicUrl, credit: null, creditUrl: null };
+        });
+    },
+  },
 };
 
 // ─── Config ───────────────────────────────────────────────────────────────────
@@ -181,6 +198,7 @@ function SetupScreen({ onStart, loading, err }) {
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             <Pill active={source === "pexels"} onClick={() => setSource("pexels")}>Pexels</Pill>
             <Pill active={source === "gallery"} onClick={() => setSource("gallery")}>Anatomi</Pill>
+            <Pill active={source === "doll"} onClick={() => setSource("doll")}>Referansedukke</Pill>
           </div>
         </Card>
 
@@ -484,6 +502,10 @@ export default function GestureApp() {
         photos = await SOURCES.gallery.fetch();
         catLabel = "Anatomi";
         if (!photos.length) throw new Error("Ingen bilder funnet i galleriet ennå");
+      } else if (sourceId === "doll") {
+        photos = await SOURCES.doll.fetch();
+        catLabel = "Referansedukke";
+        if (!photos.length) throw new Error("Ingen bilder funnet i referansedukke-mappen ennå");
       } else {
         const cat = CATS.find(c => c.id === catId);
         photos = await SOURCES.pexels.fetch(cat.q);
